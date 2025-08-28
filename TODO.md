@@ -1,2 +1,1 @@
-- GitHub
-- Deployment
+- Deployment (Vercel gab es Probleme mit dem Deployment)

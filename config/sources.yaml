@@ -14,6 +14,9 @@ Tech & Product News:
   - name: Google AI Blog
     url: https://research.google/blog/
     feed: null
+  - name: The Batch
+    url: https://www.deeplearning.ai/the-batch/
+    feed: null
   - name: GitHub Blog
     url: https://github.blog/
     feed: https://github.blog/feed/
