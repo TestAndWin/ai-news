@@ -1,0 +1,120 @@
+Tech & Product News:
+  - name: Latent Space
+    url: https://www.latent.space/?sort=new
+    feed: null
+  - name: The Neuron
+    url: https://www.theneuron.ai/newsletter
+    feed: null
+  - name: OpenAI Blog
+    url: https://openai.com/de-DE/news/
+    feed: null
+  - name: Anthropic News
+    url: https://www.anthropic.com/news
+    feed: null
+  - name: Google AI Blog
+    url: https://research.google/blog/
+    feed: null
+  - name: GitHub Blog
+    url: https://github.blog/
+    feed: https://github.blog/feed/
+  - name: Qdrant Blog
+    url: https://qdrant.tech/blog/
+    feed: null
+  - name: Ars Technica AI
+    url: https://arstechnica.com/tag/artificial-intelligence/
+    feed: null
+  - name: Wired AI
+    url: https://www.wired.com/tag/artificial-intelligence/
+    feed: null
+  - name: Import AI (Jack Clark)
+    url: https://jack-clark.net/
+    feed: https://jack-clark.net/rss
+  - name: NVIDIA Blog
+    url: https://blogs.nvidia.com/
+    feed: https://blogs.nvidia.com/feed/
+  - name: Microsoft Research Blog
+    url: https://www.microsoft.com/en-us/research/blog/
+    feed: https://www.microsoft.com/en-us/research/feed/
+  - name: Hugging Face Blog
+    url: https://huggingface.co/blog
+    feed: https://huggingface.co/blog/feed.xml
+  - name: NVIDIA Developer Blog
+    url: https://developer.nvidia.com/blog/
+    feed: https://developer.nvidia.com/blog/feed/
+  - name: AWS Machine Learning Blog
+    url: https://aws.amazon.com/blogs/machine-learning/
+    feed: https://aws.amazon.com/blogs/machine-learning/feed/
+  - name: Google Cloud Blog — AI & ML
+    url: https://cloud.google.com/blog/topics/ai-machine-learning
+    feed: https://cloudblog.withgoogle.com/rss/
+  - name: Azure Blog — AI + Machine Learning
+    url: https://azure.microsoft.com/en-us/blog/category/ai-machine-learning/
+    feed: null
+  - name: LangChain Blog
+    url: https://blog.langchain.com/
+    feed: https://blog.langchain.com/rss/
+  - name: Hugging Face Papers
+    url: https://huggingface.co/papers/trending
+    feed: null
+
+Research & Science:
+  - name: MIT Technology Review AI
+    url: https://www.technologyreview.com/ai/
+    feed: https://www.technologyreview.com/feed/
+  - name: BAIR Blog (Berkeley AI Research)
+    url: https://bair.berkeley.edu/blog/
+    feed: https://bair.berkeley.edu/blog/feed.xml
+  - name: DeepMind Blog
+    url: https://deepmind.google/discover/blog
+    feed: null
+  - name: Meta AI Blog
+    url: https://ai.meta.com/blog/
+    feed: null
+  - name: Sebastian Raschka Blog
+    url: https://sebastianraschka.com/blog/
+    feed: null
+  - name: Chip Huyen Blog
+    url: https://huyenchip.com/blog/
+    feed: https://huyenchip.com/feed.xml
+  - name: Simon Willison Blog
+    url: https://simonwillison.net/
+    feed: https://simonwillison.net/atom/everything/
+    categoryFilter: "AI" 
+
+Business & Society:
+  - name: Ethan Mollick (One Useful Thing)
+    url: https://www.oneusefulthing.org/
+    feed: https://www.oneusefulthing.org/feed
+  - name: Management 3k
+    url: https://www.management30.com/blog/
+    feed: null
+  - name: VentureBeat AI
+    url: https://venturebeat.com/category/ai/
+    feed: https://venturebeat.com/category/ai/feed/
+  - name: The Verge AI
+    url: https://www.theverge.com/ai-artificial-intelligence
+    feed: null
+  - name: TechCrunch AI
+    url: https://techcrunch.com/tag/ai/
+    feed: https://techcrunch.com/tag/ai/feed/
+  - name: McKinsey Digital
+    url: https://www.mckinsey.com/business-functions/mckinsey-digital/our-insights
+    feed: null
+  - name: Harvard Business Review AI
+    url: https://hbr.org/topic/subject/ai-and-machine-learning
+    feed: null
+  - name: Brookings AI & Emerging Tech
+    url: https://www.brookings.edu/topic/artificial-intelligence/
+    feed: null
+  - name: AI Now Institute
+    url: https://ainowinstitute.org/
+    feed: null
+  - name: InfoQ (AI/ML & Architecture)
+    url: https://www.infoq.com/artificial_intelligence/
+    feed: null
+  - name: The New Stack
+    url: https://thenewstack.io/
+    feed: https://thenewstack.io/feed/
+  - name: OECD AI Policy Observatory
+    url: https://oecd.ai/
+    feed: null
