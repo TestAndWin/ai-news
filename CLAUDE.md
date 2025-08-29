@@ -16,7 +16,7 @@ Use context7.com MCP to find the latest documentation for these technologies.
 ```bash
 # Development
 npm run dev            # Start development server with Turbopack
-npm run build          # Create production build
+npm run build          # Generate Prisma client and create production build
 npm run start          # Start production server
 npm run lint           # Run ESLint
 
