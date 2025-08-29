@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { withApiAuth } from '@/lib/api-auth'
-import { withRateLimit } from '@/lib/rate-limiter'
 
-async function handlePATCH(
+export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Apply authentication
+  const { validateApiKey, createUnauthorizedResponse } = await import('@/lib/api-auth')
+  if (!validateApiKey(request)) {
+    return createUnauthorizedResponse()
+  }
+
+  // Apply rate limiting
+  const { checkRateLimit, createRateLimitResponse } = await import('@/lib/rate-limiter')
+  const { allowed, remainingRequests, resetTime } = checkRateLimit(request)
+  if (!allowed) {
+    return createRateLimitResponse()
+  }
+
   try {
     const { id } = await params
     const { rating } = await request.json()
@@ -45,7 +56,14 @@ async function handlePATCH(
       data: { rating }
     })
 
-    return NextResponse.json(updatedNews)
+    const response = NextResponse.json(updatedNews)
+    
+    // Add rate limit headers
+    response.headers.set('X-RateLimit-Limit', '10')
+    response.headers.set('X-RateLimit-Remaining', remainingRequests.toString())
+    response.headers.set('X-RateLimit-Reset', resetTime.toString())
+
+    return response
   } catch (error) {
     console.error('Error updating news rating:', error)
     return NextResponse.json(
@@ -54,6 +72,3 @@ async function handlePATCH(
     )
   }
 }
-
-// Apply authentication and rate limiting
-export const PATCH = withRateLimit(withApiAuth(handlePATCH))

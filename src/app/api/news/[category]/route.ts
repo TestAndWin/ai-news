@@ -4,12 +4,13 @@ import { getNewsByCategory } from '@/lib/news-fetcher'
 
 export async function GET(
   request: Request,
-  { params }: { params: { category: string } }
+  { params }: { params: Promise<{ category: string }> }
 ) {
   try {
+    const resolvedParams = await params
     let category: Category
 
-    switch (params.category.toLowerCase()) {
+    switch (resolvedParams.category.toLowerCase()) {
       case 'tech':
       case 'tech-product':
         category = Category.TECH_PRODUCT

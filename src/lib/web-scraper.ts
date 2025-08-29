@@ -164,7 +164,7 @@ async function getBrowser(): Promise<Browser> {
     const isProduction = process.env.NODE_ENV === 'production'
     
     browser = await puppeteer.launch({
-      headless: 'new', // Use new headless mode
+      headless: true, // Use headless mode
       args: [
         // Security-safe flags only
         '--disable-dev-shm-usage',

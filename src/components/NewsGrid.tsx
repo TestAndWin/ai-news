@@ -37,7 +37,6 @@ export function NewsGrid({ news, title, icon, showReadNews = false, showUnintere
   
   const unreadCount = news.filter(item => !item.clicked).length
   const interestingCount = news.filter(item => item.rating === 2).length
-  const uninterestingCount = news.filter(item => item.rating === 1).length
   const totalCount = news.length
   return (
     <div className="flex flex-col h-full space-y-6">

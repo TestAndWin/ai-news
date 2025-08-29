@@ -11,9 +11,9 @@ interface RequestOptions extends RequestInit {
 export async function apiRequest(url: string, options: RequestOptions = {}): Promise<Response> {
   const { skipAuth = false, headers = {}, ...otherOptions } = options
   
-  const requestHeaders: HeadersInit = {
+  const requestHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...headers
+    ...headers as Record<string, string>
   }
   
   // Add API key for authenticated requests
@@ -32,14 +32,14 @@ export const api = {
   get: (url: string, options: RequestOptions = {}) => 
     apiRequest(url, { ...options, method: 'GET' }),
     
-  post: (url: string, data?: any, options: RequestOptions = {}) => 
+  post: (url: string, data?: unknown, options: RequestOptions = {}) => 
     apiRequest(url, { 
       ...options, 
       method: 'POST', 
       body: data ? JSON.stringify(data) : undefined 
     }),
     
-  patch: (url: string, data?: any, options: RequestOptions = {}) => 
+  patch: (url: string, data?: unknown, options: RequestOptions = {}) => 
     apiRequest(url, { 
       ...options, 
       method: 'PATCH', 
