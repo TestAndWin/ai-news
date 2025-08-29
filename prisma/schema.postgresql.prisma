@@ -1,0 +1,41 @@
+// PostgreSQL Schema for Production (Vercel)
+// This schema is used when deploying to Vercel with PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model NewsItem {
+  id          String   @id @default(cuid())
+  title       String
+  summary     String
+  url         String
+  publishedAt DateTime
+  category    Category
+  source      String
+  clicked     Boolean  @default(false)
+  rating      Int?     // 1 = thumbs down, 2 = thumbs up, null = not rated
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([publishedAt])
+  @@index([rating])
+}
+
+model AppMetadata {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+enum Category {
+  TECH_PRODUCT
+  RESEARCH_SCIENCE
+  BUSINESS_SOCIETY
+}

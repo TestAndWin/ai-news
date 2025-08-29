@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate && next build",
+    "build": "npm run prisma:generate:production && next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "npm run prisma:generate:auto",
+    "prisma:generate:auto": "if [ \"$VERCEL\" = \"1\" ]; then npm run prisma:generate:production; else npm run prisma:generate:dev; fi",
+    "prisma:generate:dev": "prisma generate --schema=prisma/schema.prisma",
+    "prisma:generate:production": "prisma generate --schema=prisma/schema.postgresql.prisma"
   },
   "dependencies": {
     "@prisma/client": "^6.14.0",

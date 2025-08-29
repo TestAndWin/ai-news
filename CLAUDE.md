@@ -21,8 +21,9 @@ npm run start          # Start production server
 npm run lint           # Run ESLint
 
 # Database
-npx prisma generate    # Generate Prisma client after schema changes
-npx prisma db push     # Push schema changes to SQLite database
+npm run prisma:generate:dev        # Generate Prisma client for development (SQLite)
+npm run prisma:generate:production  # Generate Prisma client for production (PostgreSQL)
+npx prisma db push     # Push schema changes to database
 npx prisma studio      # Open database GUI
 
 # News Fetching (via API during development)
@@ -41,7 +42,9 @@ This is an AI news aggregation platform with intelligent curation. The architect
 - **Caching**: Web scraper uses JSON cache in `cache/scraper-cache.json`
 
 ### Database Design
-- **SQLite + Prisma**: Simple local database with NewsItem and AppMetadata models
+- **Multi-Database Setup**: SQLite for development, PostgreSQL for production (Vercel)
+- **Dual Schemas**: `schema.prisma` (SQLite) and `schema.postgresql.prisma` (PostgreSQL)
+- **Models**: NewsItem and AppMetadata with consistent schema across databases
 - **Categories**: TECH_PRODUCT, RESEARCH_SCIENCE, BUSINESS_SOCIETY
 - **User Interactions**: Click tracking (`clicked: Boolean`) and rating system (`rating: 1|2|null`)
 
@@ -61,8 +64,10 @@ This is an AI news aggregation platform with intelligent curation. The architect
 - `src/lib/news-fetcher.ts` - Core news aggregation logic and curation algorithm
 - `src/lib/web-scraper.ts` - Puppeteer-based scraping engine with site-specific selectors
 - `src/lib/api-auth.ts` - API authentication wrapper
+- `src/lib/db.ts` - Database configuration with environment detection
 - `config/sources.yaml` - News sources configuration (edit here to add sources)
-- `prisma/schema.prisma` - Database schema
+- `prisma/schema.prisma` - SQLite database schema (development)
+- `prisma/schema.postgresql.prisma` - PostgreSQL database schema (production)
 
 ### Testing News Sources
 When adding new sources to `config/sources.yaml`:
@@ -76,3 +81,9 @@ When adding new sources to `config/sources.yaml`:
 - Site-specific selectors in `src/lib/web-scraper.ts`
 - Graceful fallback to generic selectors when specific ones fail
 - Cache prevents re-scraping same content within time windows
+
+### Vercel Deployment Notes
+- PostgreSQL database is auto-configured via Vercel Storage
+- Build automatically uses PostgreSQL schema in production
+- Environment variables (DATABASE_URL, POSTGRES_*) are set by Vercel
+- Local development continues to use SQLite for simplicity
