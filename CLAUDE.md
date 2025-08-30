@@ -16,13 +16,14 @@ Use context7.com MCP to find the latest documentation for these technologies.
 ```bash
 # Development
 npm run dev            # Start development server with Turbopack
-npm run build          # Generate Prisma client and create production build
+npm run build          # Deploy DB schema, generate Prisma client, and create production build
 npm run start          # Start production server
 npm run lint           # Run ESLint
 
 # Database
 npm run prisma:generate:dev        # Generate Prisma client for development (SQLite)
 npm run prisma:generate:production  # Generate Prisma client for production (PostgreSQL)
+npm run prisma:deploy:production    # Deploy migrations to PostgreSQL (production)
 npx prisma db push     # Push schema changes to database
 npx prisma studio      # Open database GUI
 
@@ -84,6 +85,7 @@ When adding new sources to `config/sources.yaml`:
 
 ### Vercel Deployment Notes
 - PostgreSQL database is auto-configured via Vercel Storage
-- Build automatically uses PostgreSQL schema in production
+- Build process automatically deploys schema and generates PostgreSQL client
+- Database tables are created via Prisma migrations during build
 - Environment variables (DATABASE_URL, POSTGRES_*) are set by Vercel
 - Local development continues to use SQLite for simplicity
