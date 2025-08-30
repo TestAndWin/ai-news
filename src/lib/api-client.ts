@@ -1,8 +1,9 @@
 // Client-side API utility for authenticated requests
-// Note: In a real production app, you'd want to handle API keys more securely
-// This is a simplified implementation for development
+// Note: API key is embedded at build time from server environment
 
-const API_KEY = 'dev-api-key-change-in-production' // This should match your .env API_KEY
+const API_KEY = process.env.NODE_ENV === 'production' 
+  ? '__PRODUCTION_API_KEY__' // Will be replaced at build time
+  : 'dev-api-key-change-in-production'
 
 interface RequestOptions extends RequestInit {
   skipAuth?: boolean
