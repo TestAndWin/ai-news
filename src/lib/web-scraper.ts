@@ -1,4 +1,6 @@
 import puppeteer, { Browser } from 'puppeteer'
+import puppeteerCore from 'puppeteer-core'
+import chromium from '@sparticuz/chromium'
 import fs from 'fs/promises'
 import path from 'path'
 
@@ -160,32 +162,68 @@ function queueRequest<T>(fn: () => Promise<T>): Promise<T> {
 
 async function getBrowser(): Promise<Browser> {
   if (!browser) {
-    // Optimized configuration for Ubuntu server deployment
     const isProduction = process.env.NODE_ENV === 'production'
+    const isVercel = process.env.VERCEL === '1'
     
-    browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        // Essential flags for serverless environments like Vercel
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--disable-web-security',
-        '--disable-features=VizDisplayCompositor',
-        '--disable-extensions',
-        '--disable-plugins',
-        '--disable-images',
-        '--no-first-run',
-        '--no-default-browser-check',
-        '--single-process',
-        '--disable-background-timer-throttling',
-        '--disable-renderer-backgrounding',
-        '--disable-backgrounding-occluded-windows'
-      ],
-      timeout: 30000
-      // Remove executablePath - let Puppeteer use bundled Chromium
-    })
+    console.log(`🔧 Launching browser - Production: ${isProduction}, Vercel: ${isVercel}`)
+    
+    try {
+      if (isVercel) {
+        // Use serverless-compatible Chromium for Vercel
+        console.log('🔧 Using @sparticuz/chromium for Vercel serverless environment')
+        
+        browser = await puppeteerCore.launch({
+          args: [
+            ...chromium.args,
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--disable-web-security',
+            '--disable-features=VizDisplayCompositor',
+            '--disable-extensions',
+            '--disable-plugins',
+            '--disable-images',
+            '--no-first-run',
+            '--no-default-browser-check',
+            '--single-process',
+            '--disable-background-timer-throttling',
+            '--disable-renderer-backgrounding',
+            '--disable-backgrounding-occluded-windows'
+          ],
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath(),
+          headless: chromium.headless,
+          timeout: 30000,
+        })
+      } else {
+        // Use regular Puppeteer for local development
+        console.log('🔧 Using regular Puppeteer for local development')
+        
+        browser = await puppeteer.launch({
+          headless: 'new',
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--disable-web-security',
+            '--disable-features=VizDisplayCompositor',
+            '--disable-extensions',
+            '--disable-plugins',
+            '--disable-images',
+            '--no-first-run',
+            '--no-default-browser-check'
+          ],
+          timeout: 30000
+        })
+      }
+      
+      console.log('✅ Browser launched successfully')
+    } catch (error) {
+      console.error('❌ Failed to launch browser:', error)
+      throw error
+    }
   }
   return browser
 }
