@@ -1,8 +1,9 @@
-import puppeteer, { Browser } from 'puppeteer'
+import puppeteer from 'puppeteer'
 import puppeteerCore from 'puppeteer-core'
 import chromium from '@sparticuz/chromium'
 import fs from 'fs/promises'
 import path from 'path'
+import type { Browser } from 'puppeteer-core'
 
 // Types
 interface ScrapedArticle {
@@ -191,17 +192,17 @@ async function getBrowser(): Promise<Browser> {
             '--disable-renderer-backgrounding',
             '--disable-backgrounding-occluded-windows'
           ],
-          defaultViewport: chromium.defaultViewport,
+          defaultViewport: { width: 1280, height: 720 },
           executablePath: await chromium.executablePath(),
-          headless: chromium.headless,
+          headless: true,
           timeout: 30000,
-        })
+        }) as unknown as Browser
       } else {
         // Use regular Puppeteer for local development
         console.log('🔧 Using regular Puppeteer for local development')
         
         browser = await puppeteer.launch({
-          headless: 'new',
+          headless: true,
           args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
@@ -216,7 +217,7 @@ async function getBrowser(): Promise<Browser> {
             '--no-default-browser-check'
           ],
           timeout: 30000
-        })
+        }) as unknown as Browser
       }
       
       console.log('✅ Browser launched successfully')
