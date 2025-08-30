@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Header } from '@/components/Header'
 import { NewsGrid } from '@/components/NewsGrid'
 import { MatrixRain } from '@/components/MatrixRain'
+import { api } from '@/lib/api-client'
 import { Cpu, Microscope, Building2, Eye, EyeOff, ThumbsDown, ThumbsUp } from 'lucide-react'
 
 interface NewsItem {
@@ -104,13 +105,12 @@ export default function Home() {
   const handleRefresh = async () => {
     setIsRefreshing(true)
     try {
-      await fetch('/api/news/fetch', { method: 'POST' })
+      // Use authenticated API client for news fetch
+      await api.post('/api/news/fetch')
       
       // Update timestamp after successful fetch
-      await fetch('/api/metadata/last-refresh', { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ timestamp: new Date().toISOString() })
+      await api.post('/api/metadata/last-refresh', { 
+        timestamp: new Date().toISOString() 
       })
       
       await fetchNews()
