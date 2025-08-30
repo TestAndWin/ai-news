@@ -55,7 +55,9 @@ export async function fetchNewsFromRSS(feed: string, source: string, category: C
   try {
     const feedData = await parser.parseURL(feed)
     const items = feedData.items.slice(0, 15) // More items for better selection
+    console.log(`📡 Processing ${items.length} RSS items from ${source}`)
 
+    let newArticlesCount = 0
     for (const item of items) {
       if (!item.title || !item.link || !item.pubDate) continue
 
@@ -118,17 +120,22 @@ export async function fetchNewsFromRSS(feed: string, source: string, category: C
             source,
           },
         })
+        newArticlesCount++
       }
     }
+    
+    console.log(`✅ RSS fetch complete for ${source}: ${newArticlesCount} new articles added`)
   } catch (error) {
-    console.error(`Error fetching RSS for ${source}:`, error)
+    console.error(`❌ Error fetching RSS for ${source}:`, error)
   }
 }
 
 async function fetchNewsFromWebScraping(url: string, source: string, category: Category) {
   try {
     const articles = await scrapeWebsite(url, source)
+    console.log(`🔍 Processing ${articles.length} scraped articles from ${source}`)
     
+    let newArticlesCount = 0
     for (const article of articles) {
       if (!article.title || !article.url) continue
 
@@ -150,16 +157,20 @@ async function fetchNewsFromWebScraping(url: string, source: string, category: C
             source: article.source,
           },
         })
+        newArticlesCount++
         console.log(`✅ Added scraped article: ${article.title.substring(0, 60)}...`)
       }
     }
+    
+    console.log(`✅ Web scraping complete for ${source}: ${newArticlesCount} new articles added`)
   } catch (error) {
-    console.error(`Error scraping ${source}:`, error)
+    console.error(`❌ Error scraping ${source}:`, error)
   }
 }
 
 export async function fetchSingleSource(sourceName: string) {
   try {
+    console.log(`🚀 Starting news fetch for single source: ${sourceName}`)
     // Load cache
     await loadCache()
     
@@ -195,9 +206,9 @@ export async function fetchSingleSource(sourceName: string) {
     // Cleanup
     await cleanupScraper()
 
-    console.log(`News fetching completed for ${sourceName}`)
+    console.log(`✅ News fetching completed for ${sourceName}`)
   } catch (error) {
-    console.error(`Error fetching news for ${sourceName}:`, error)
+    console.error(`❌ Error fetching news for ${sourceName}:`, error)
     // Cleanup also on errors
     await cleanupScraper()
     throw error
@@ -206,15 +217,28 @@ export async function fetchSingleSource(sourceName: string) {
 
 export async function fetchAllNews() {
   try {
+    console.log(`🚀 Starting comprehensive news fetch from all sources`)
     // Load cache
     await loadCache()
     
     const sources = await loadSources()
+    let totalSources = 0
+    let processedSources = 0
+
+    // Count total sources
+    for (const categorySourcesArray of Object.values(sources)) {
+      totalSources += categorySourcesArray.length
+    }
+    console.log(`📊 Total sources to process: ${totalSources}`)
 
     for (const [categoryName, categorySourcesArray] of Object.entries(sources)) {
       const category = mapCategoryToEnum(categoryName)
+      console.log(`📂 Processing category: ${categoryName} (${categorySourcesArray.length} sources)`)
 
       for (const source of categorySourcesArray) {
+        processedSources++
+        console.log(`[${processedSources}/${totalSources}] Processing ${source.name}`)
+        
         if (source.feed) {
           console.log(`📡 Fetching RSS news from ${source.name}...`)
           await fetchNewsFromRSS(source.feed, source.name, category, source.categoryFilter)
@@ -231,9 +255,9 @@ export async function fetchAllNews() {
     // Cleanup
     await cleanupScraper()
 
-    console.log('News fetching completed')
+    console.log(`✅ Comprehensive news fetching completed! Processed ${processedSources}/${totalSources} sources`)
   } catch (error) {
-    console.error('Error fetching news:', error)
+    console.error('❌ Error fetching news:', error)
     // Cleanup also on errors
     await cleanupScraper()
   }
