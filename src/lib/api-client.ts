@@ -1,8 +1,8 @@
 // Client-side API utility for authenticated requests
-// Note: API key is embedded at build time from server environment
+// Note: Uses a fixed production key that matches server-side API_KEY
 
 const API_KEY = process.env.NODE_ENV === 'production' 
-  ? '__PRODUCTION_API_KEY__' // Will be replaced at build time
+  ? 'secure-prod-api-key-2024' // Must match API_KEY in Vercel env vars
   : 'dev-api-key-change-in-production'
 
 interface RequestOptions extends RequestInit {
