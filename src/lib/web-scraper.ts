@@ -164,33 +164,27 @@ async function getBrowser(): Promise<Browser> {
     const isProduction = process.env.NODE_ENV === 'production'
     
     browser = await puppeteer.launch({
-      headless: true, // Use headless mode
+      headless: true,
       args: [
-        // Security-safe flags only
+        // Essential flags for serverless environments like Vercel
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--disable-gpu',
-        '--disable-features=TranslateUI',
-        '--disable-renderer-backgrounding',
-        '--disable-backgrounding-occluded-windows',
-        '--disable-background-timer-throttling',
-        '--disable-blink-features=AutomationControlled',
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor',
         '--disable-extensions',
         '--disable-plugins',
         '--disable-images',
         '--no-first-run',
         '--no-default-browser-check',
-        // Conditional flags for production only
-        ...(isProduction ? [
-          '--no-sandbox', // Only in production with proper container setup
-          '--disable-setuid-sandbox',
-          '--single-process',
-          '--disable-logging'
-        ] : [])
+        '--single-process',
+        '--disable-background-timer-throttling',
+        '--disable-renderer-backgrounding',
+        '--disable-backgrounding-occluded-windows'
       ],
-      // Set timeout for server environments  
-      timeout: 30000,
-      // Use system Chrome in production if available
-      ...(isProduction && { executablePath: '/usr/bin/google-chrome-stable' })
+      timeout: 30000
+      // Remove executablePath - let Puppeteer use bundled Chromium
     })
   }
   return browser
