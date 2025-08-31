@@ -57,13 +57,13 @@ This is an AI news aggregation platform with intelligent curation. The architect
 ### Authentication & Security
 - **JWT Authentication**: Access tokens (1h) + Refresh tokens (7d) stored as httpOnly cookies
 - **Route Protection**: Middleware protects frontend routes, redirects unauthenticated users to login
-- **API Protection**: All API endpoints require JWT authentication (with API key fallback for backward compatibility)
+- **API Protection**: All API endpoints require JWT authentication
 - **Automatic Token Refresh**: Client-side API client handles token refresh transparently
 - **Login Flow**: Simple password-based authentication (configurable via AUTH_PASSWORD env var)
 
 ### API Architecture
 - `fetchAllNews()` vs `fetchSingleSource(sourceName)` in `src/lib/news-fetcher.ts`
-- JWT-based authentication with automatic token refresh and httpOnly cookie storage
+- JWT-only authentication with automatic token refresh and httpOnly cookie storage
 - Rate limiting applied to fetch endpoints
 - CRUD operations for news items and metadata
 - API client (`src/lib/api-client.ts`) handles authentication, retries, and error handling
