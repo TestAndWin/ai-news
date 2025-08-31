@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
-import { RefreshCw, Zap } from "lucide-react"
+import { RefreshCw, Zap, LogOut } from "lucide-react"
+import { api } from "@/lib/api-client"
 
 interface HeaderProps {
   onRefresh: () => void
@@ -11,6 +12,10 @@ interface HeaderProps {
 }
 
 export function Header({ onRefresh, isRefreshing, lastRefresh }: HeaderProps) {
+  const handleLogout = async () => {
+    await api.logout()
+  }
+
   return (
     <header className="border-b border-[#00ff88]/30 bg-card/20 backdrop-blur-md sticky top-0 z-50 relative overflow-hidden">
       {/* Scanning line effect */}
@@ -60,6 +65,15 @@ export function Header({ onRefresh, isRefreshing, lastRefresh }: HeaderProps) {
               
               <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
               {isRefreshing ? 'UPDATING...' : 'REFRESH DATA'}
+            </Button>
+
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="border-2 border-[#ff0080] bg-background/30 hover:bg-[#ff0080]/10 hover:shadow-[0_0_30px_#ff0080] font-['var(--font-share-tech-mono)'] text-[#ff0080] transition-all duration-300 relative overflow-hidden"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              DISCONNECT
             </Button>
           </div>
         </div>

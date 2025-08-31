@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { fetchAllNews, fetchSingleSource } from '@/lib/news-fetcher'
-import { withApiAuth } from '@/lib/api-auth'
+import { withAuth } from '@/lib/api-auth'
 import { withRateLimit } from '@/lib/rate-limiter'
 
-async function handlePOST(request: NextRequest) {
+async function handlePOST(request: NextRequest, tokenPayload: any) {
   try {
     const url = new URL(request.url)
     const source = url.searchParams.get('source')
@@ -34,4 +34,4 @@ async function handlePOST(request: NextRequest) {
 }
 
 // Apply authentication and rate limiting
-export const POST = withRateLimit(withApiAuth(handlePOST))
+export const POST = withRateLimit(withAuth(handlePOST))

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getLastRefreshTimestamp, setLastRefreshTimestamp, formatTimestamp, getRelativeTime } from '@/lib/metadata'
+import { withAuth } from '@/lib/api-auth'
 
 export async function GET() {
   try {
@@ -19,7 +20,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest, tokenPayload: any) {
   try {
     const body = await request.json()
     const timestamp = body.timestamp ? new Date(body.timestamp) : new Date()
@@ -47,3 +48,5 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+export const POST = withAuth(handlePOST)
