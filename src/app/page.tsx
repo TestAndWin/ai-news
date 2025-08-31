@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { Header } from '@/components/Header'
 import { NewsGrid } from '@/components/NewsGrid'
-import { MatrixRain } from '@/components/MatrixRain'
 import { api } from '@/lib/api-client'
 import { Cpu, Microscope, Building2, Eye, EyeOff, ThumbsDown, ThumbsUp } from 'lucide-react'
 
@@ -125,27 +124,26 @@ export default function Home() {
   if (isLoading) {
     return (
       <div className="min-h-screen relative overflow-hidden">
-        <MatrixRain />
         <div className="flex items-center justify-center min-h-screen relative z-10">
           <div className="text-center">
-            <div className="text-5xl font-bold mb-6 text-[#00ff88] glitch-effect font-['var(--font-orbitron)']" 
-                 style={{textShadow: '0 0 20px #00ff88, 0 0 40px #00ff88, 0 0 60px #00ff88'}}>
-              INITIALIZING...
+            <div className="text-5xl font-bold mb-6 text-[var(--pulp-orange)] glitch-effect font-['var(--font-orbitron)']" 
+                 style={{textShadow: '0 0 20px var(--pulp-orange), 0 0 40px var(--pulp-orange), 0 0 60px var(--pulp-yellow)'}}>
+              CAPTAIN FUTURE
             </div>
-            <div className="text-[#00f5ff] font-['var(--font-share-tech-mono)'] text-lg mb-4">
-              <span className="typing-effect">NEURAL NETWORK ACTIVATION IN PROGRESS</span>
+            <div className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)'] text-lg mb-4">
+              <span className="typing-effect">COSMIC INTELLIGENCE NETWORK ACTIVATION</span>
             </div>
             <div className="flex justify-center gap-2 mb-4">
               {[...Array(8)].map((_, i) => (
                 <div 
                   key={i}
-                  className="w-2 h-8 bg-[#00ff88] rounded-full animate-pulse"
+                  className="w-2 h-8 bg-[var(--pulp-orange)] rounded-full animate-pulse"
                   style={{ animationDelay: `${i * 0.1}s` }}
                 ></div>
               ))}
             </div>
             <div className="text-muted-foreground font-['var(--font-share-tech-mono)']">
-              Establishing secure data links...
+              Establishing cosmic communication channels...
             </div>
           </div>
         </div>
@@ -155,7 +153,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <MatrixRain />
       <div className="relative z-10">
         <Header onRefresh={handleRefresh} isRefreshing={isRefreshing} lastRefresh={lastRefresh} />
         
@@ -199,35 +196,35 @@ export default function Home() {
           </div>
         </main>
         
-        <footer className="border-t-2 border-[#00ff88]/30 bg-card/20 backdrop-blur-md mt-16 relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00ff88]/5 to-transparent"></div>
+        <footer className="border-t-2 border-[var(--pulp-orange)]/30 bg-card/20 backdrop-blur-md mt-16 relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--pulp-orange)]/5 to-transparent"></div>
           <div className="container mx-auto px-4 py-8 relative z-10">
             {/* Toggle Buttons */}
             <div className="flex justify-center gap-4 mb-6 flex-wrap">
               <button
                 onClick={() => setShowReadNews(!showReadNews)}
-                className="flex items-center gap-3 px-6 py-3 rounded-lg border-2 border-[#00f5ff]/30 bg-card/40 backdrop-blur-sm hover:border-[#00f5ff] hover:shadow-[0_0_20px_#00f5ff,inset_0_0_15px_rgba(0,245,255,0.1)] transition-all duration-300 group"
+                className="flex items-center gap-3 px-6 py-3 rounded-lg border-2 border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] hover:shadow-[0_0_20px_var(--pulp-blue),inset_0_0_15px_rgba(0,212,255,0.1)] transition-all duration-300 group"
               >
                 {showReadNews ? (
-                  <EyeOff className="w-5 h-5 text-[#ff0080] group-hover:text-[#00f5ff] transition-colors" />
+                  <EyeOff className="w-5 h-5 text-[var(--pulp-red)] group-hover:text-[var(--pulp-blue)] transition-colors" />
                 ) : (
-                  <Eye className="w-5 h-5 text-[#00f5ff] group-hover:text-[#00ff88] transition-colors" />
+                  <Eye className="w-5 h-5 text-[var(--pulp-blue)] group-hover:text-[var(--pulp-orange)] transition-colors" />
                 )}
-                <span className="text-[#00f5ff] group-hover:text-[#00ff88] font-['var(--font-share-tech-mono)'] font-medium transition-colors">
+                <span className="text-[var(--pulp-blue)] group-hover:text-[var(--pulp-orange)] font-['var(--font-share-tech-mono)'] font-medium transition-colors">
                   {showReadNews ? 'HIDE READ NEWS' : 'SHOW READ NEWS'}
                 </span>
               </button>
 
               <button
                 onClick={() => setShowUninteresting(!showUninteresting)}
-                className="flex items-center gap-3 px-6 py-3 rounded-lg border-2 border-[#ff0080]/30 bg-card/40 backdrop-blur-sm hover:border-[#ff0080] hover:shadow-[0_0_20px_#ff0080,inset_0_0_15px_rgba(255,0,128,0.1)] transition-all duration-300 group"
+                className="flex items-center gap-3 px-6 py-3 rounded-lg border-2 border-[var(--pulp-red)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-red)] hover:shadow-[0_0_20px_var(--pulp-red),inset_0_0_15px_rgba(255,56,56,0.1)] transition-all duration-300 group"
               >
                 {showUninteresting ? (
-                  <ThumbsUp className="w-5 h-5 text-[#00ff88] group-hover:text-[#ff0080] transition-colors" />
+                  <ThumbsUp className="w-5 h-5 text-[var(--pulp-green)] group-hover:text-[var(--pulp-red)] transition-colors" />
                 ) : (
-                  <ThumbsDown className="w-5 h-5 text-[#ff0080] group-hover:text-[#00ff88] transition-colors" />
+                  <ThumbsDown className="w-5 h-5 text-[var(--pulp-red)] group-hover:text-[var(--pulp-green)] transition-colors" />
                 )}
-                <span className="text-[#ff0080] group-hover:text-[#00ff88] font-['var(--font-share-tech-mono)'] font-medium transition-colors">
+                <span className="text-[var(--pulp-red)] group-hover:text-[var(--pulp-green)] font-['var(--font-share-tech-mono)'] font-medium transition-colors">
                   {showUninteresting ? 'HIDE UNINTERESTING' : 'SHOW UNINTERESTING'}
                 </span>
               </button>
@@ -236,20 +233,20 @@ export default function Home() {
             {/* Terminal Info */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-4 mb-4">
-                <div className="w-2 h-2 bg-[#00ff88] rounded-full animate-pulse"></div>
-                <p className="text-[#00ff88] text-lg font-['var(--font-orbitron)'] font-bold">
-                  AI NEWS TERMINAL
+                <div className="w-2 h-2 bg-[var(--pulp-orange)] rounded-full animate-pulse"></div>
+                <p className="text-[var(--pulp-orange)] text-lg font-['var(--font-orbitron)'] font-bold">
+                  AI NEWS
                 </p>
-                <div className="w-2 h-2 bg-[#00ff88] rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-[var(--pulp-orange)] rounded-full animate-pulse"></div>
               </div>
-              <p className="text-[#00f5ff] font-['var(--font-share-tech-mono)'] text-sm">
-                Neural network synchronization complete • Data streams: ACTIVE
+              <p className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)'] text-sm">
+                Cosmic intelligence network active • Solar system scan: COMPLETE
               </p>
               <p className="text-muted-foreground font-['var(--font-share-tech-mono)'] text-xs mt-2">
                 Filter mode: {showReadNews && showUninteresting ? 'ALL NEWS' : 
                              showReadNews ? 'ALL + INTERESTING' : 
                              showUninteresting ? 'UNREAD + ALL RATINGS' : 
-                             'UNREAD + INTERESTING'} • Quantum encryption: ENABLED
+                             'UNREAD + INTERESTING'} • Future-tech encryption: ENABLED
               </p>
             </div>
           </div>

@@ -48,44 +48,44 @@
 :root {
   --radius: 0.625rem;
   
-  /* Cyberpunk Dark Theme */
-  --background: #0a0a0f;
-  --foreground: #e0e6ed;
-  --card: #111827;
-  --card-foreground: #e0e6ed;
-  --popover: #111827;
-  --popover-foreground: #e0e6ed;
-  --primary: #00ff88;
-  --primary-foreground: #000000;
-  --secondary: #1f2937;
-  --secondary-foreground: #e0e6ed;
-  --muted: #1f2937;
-  --muted-foreground: #9ca3af;
-  --accent: #0ea5e9;
+  /* Captain Future Pulp Sci-Fi Theme */
+  --background: #0f1419;
+  --foreground: #f0f4f7;
+  --card: #1a2332;
+  --card-foreground: #f0f4f7;
+  --popover: #1a2332;
+  --popover-foreground: #f0f4f7;
+  --primary: #ff6b35;
+  --primary-foreground: #ffffff;
+  --secondary: #2d3748;
+  --secondary-foreground: #f0f4f7;
+  --muted: #2d3748;
+  --muted-foreground: #a0aec0;
+  --accent: #00d4ff;
   --accent-foreground: #ffffff;
-  --destructive: #ef4444;
-  --border: #1f2937;
-  --input: #1f2937;
-  --ring: #00ff88;
+  --destructive: #ff4757;
+  --border: #2d3748;
+  --input: #2d3748;
+  --ring: #ff6b35;
   
-  /* Extended Cyberpunk Colors */
-  --neon-green: #00ff88;
-  --neon-pink: #ff0080;
-  --neon-cyan: #00f5ff;
-  --neon-purple: #8a2be2;
-  --neon-orange: #ff6600;
-  --neon-yellow: #ffff00;
+  /* Captain Future Pulp Colors */
+  --pulp-orange: #ff6b35;
+  --pulp-red: #ff3838;
+  --pulp-yellow: #ffd700;
+  --pulp-blue: #00d4ff;
+  --pulp-green: #2ed573;
+  --pulp-purple: #a55eea;
   
   /* Status Colors */
-  --status-error: #ff3366;
-  --status-warning: #ff9900;
-  --status-success: #00ff88;
-  --status-info: #00f5ff;
+  --status-error: #ff4757;
+  --status-warning: #ffa502;
+  --status-success: #2ed573;
+  --status-info: #00d4ff;
   
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #00ff88 0%, #00f5ff 100%);
-  --gradient-secondary: linear-gradient(135deg, #ff0080 0%, #8a2be2 100%);
-  --gradient-accent: linear-gradient(135deg, #ff6600 0%, #ffff00 100%);
+  /* Captain Future Gradients */
+  --gradient-primary: linear-gradient(135deg, #ff6b35 0%, #ffd700 100%);
+  --gradient-secondary: linear-gradient(135deg, #00d4ff 0%, #a55eea 100%);
+  --gradient-accent: linear-gradient(135deg, #ff3838 0%, #ff6b35 100%);
 }
 
 .dark {
@@ -99,12 +99,14 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-share-tech-mono), 'Courier New', monospace;
-    background-image: 
-      radial-gradient(circle at 1px 1px, rgba(0, 255, 136, 0.15) 1px, transparent 0),
-      linear-gradient(90deg, transparent 98%, rgba(0, 245, 255, 0.03) 100%),
-      linear-gradient(0deg, transparent 98%, rgba(255, 0, 128, 0.03) 100%);
-    background-size: 20px 20px, 100px 100px, 100px 100px;
-    animation: backgroundShift 20s ease-in-out infinite alternate;
+    background: 
+      radial-gradient(ellipse at center, rgba(255, 107, 53, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.08) 0%, transparent 30%),
+      radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 40% 40%, rgba(165, 94, 234, 0.04) 0%, transparent 50%),
+      linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
+    background-attachment: fixed;
+    animation: cosmicShift 30s ease-in-out infinite alternate;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-orbitron), 'Courier New', monospace;
@@ -136,23 +138,33 @@
   }
 }
 
-@keyframes backgroundShift {
+@keyframes cosmicShift {
   0% {
-    background-position: 0% 0%, 0% 0%, 0% 0%;
+    background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%, 50% 50%, 80% 20%, 40% 60%;
   }
   100% {
-    background-position: 100% 100%, 100% 100%, 100% 100%;
+    background-position: 200% 200%, 100% 100%, 160% 40%, 80% 120%;
   }
 }
 
-@keyframes neonPulse {
+@keyframes heroicGlow {
   0%, 100% {
-    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px currentColor;
+    box-shadow: 
+      0 0 10px var(--pulp-orange),
+      0 0 20px var(--pulp-orange),
+      0 0 30px var(--pulp-orange);
     opacity: 1;
   }
   50% {
-    box-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
-    opacity: 0.8;
+    box-shadow: 
+      0 0 15px var(--pulp-orange),
+      0 0 30px var(--pulp-orange),
+      0 0 45px var(--pulp-orange),
+      0 0 60px var(--pulp-yellow);
+    opacity: 0.9;
   }
 }
 
@@ -184,7 +196,7 @@
     border-color: transparent;
   }
   51%, 100% {
-    border-color: var(--neon-green);
+    border-color: var(--pulp-orange);
   }
 }
 
@@ -241,8 +253,8 @@
 }
 
 /* Utility Classes */
-.neon-glow {
-  animation: neonPulse 2s ease-in-out infinite alternate;
+.heroic-glow {
+  animation: heroicGlow 2s ease-in-out infinite alternate;
 }
 
 /* Uniform card heights across all columns */
@@ -257,7 +269,7 @@
 .typing-effect {
   overflow: hidden;
   white-space: nowrap;
-  border-right: 2px solid var(--neon-green);
+  border-right: 2px solid var(--pulp-orange);
   animation: typing 3.5s steps(40, end), blink 1s step-end infinite;
 }
 
@@ -268,7 +280,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--neon-cyan);
+  background: var(--pulp-blue);
   animation: scanLine 2s linear infinite;
   opacity: 0.7;
 }
@@ -289,8 +301,8 @@
     0deg,
     transparent,
     transparent 2px,
-    rgba(0, 255, 136, 0.1) 2px,
-    rgba(0, 255, 136, 0.1) 4px
+    rgba(255, 107, 53, 0.1) 2px,
+    rgba(255, 107, 53, 0.1) 4px
   );
   pointer-events: none;
 }

@@ -75,25 +75,25 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
   }
 
   return (
-    <Card className={`border-2 border-[#00ff88]/30 bg-card/40 backdrop-blur-sm hover:border-[#00ff88] hover:shadow-[0_0_30px_#00ff88,inset_0_0_20px_rgba(0,255,136,0.1)] transition-all duration-500 group relative overflow-hidden hologram news-card flex flex-col ${isClicked ? 'opacity-70' : ''}`}>
+    <Card className={`border-2 border-[var(--pulp-orange)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-orange)] hover:shadow-[0_0_30px_var(--pulp-orange),inset_0_0_20px_rgba(255,107,53,0.1)] transition-all duration-500 group relative overflow-hidden hologram news-card flex flex-col ${isClicked ? 'opacity-70' : ''}`}>
       {/* Corner accents */}
-      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00f5ff]"></div>
-      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#ff0080]"></div>
-      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#ff0080]"></div>
-      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00f5ff]"></div>
+      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[var(--pulp-blue)]"></div>
+      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[var(--pulp-red)]"></div>
+      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[var(--pulp-red)]"></div>
+      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[var(--pulp-blue)]"></div>
       
       {/* Shimmer effect on hover */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00ff88]/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_ease-out] pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--pulp-orange)]/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_ease-out] pointer-events-none"></div>
       
       <CardHeader className="pb-3 relative z-10">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-bold text-lg text-foreground group-hover:text-[#00ff88] transition-all duration-300 line-clamp-2 font-['var(--font-orbitron)']" 
-              style={{textShadow: '0 0 10px rgba(0,255,136,0.5)'}}>
+          <h3 className="font-bold text-lg text-foreground group-hover:text-[var(--pulp-orange)] transition-all duration-300 line-clamp-2 font-['var(--font-orbitron)']" 
+              style={{textShadow: '0 0 10px rgba(255,107,53,0.5)'}}>
             {news.title}
           </h3>
           <div className="flex items-center gap-2 flex-shrink-0">
             {isClicked && (
-              <Check className="w-4 h-4 text-[#00ff88] neon-glow" />
+              <Check className="w-4 h-4 text-[var(--pulp-orange)] heroic-glow" />
             )}
             
             {/* Rating buttons - always shown */}
@@ -101,8 +101,8 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
               onClick={() => handleRating(2)}
               className={`transition-all duration-200 hover:scale-110 ${
                 currentRating === 2
-                  ? 'text-[#00ff88] neon-glow'
-                  : 'text-[#00f5ff] hover:text-[#00ff88]'
+                  ? 'text-[var(--pulp-orange)] heroic-glow'
+                  : 'text-[var(--pulp-blue)] hover:text-[var(--pulp-orange)]'
               }`}
               title="Thumbs Up"
             >
@@ -113,8 +113,8 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
               onClick={() => handleRating(1)}
               className={`transition-all duration-200 hover:scale-110 ${
                 currentRating === 1
-                  ? 'text-[#ff0080] neon-glow'
-                  : 'text-[#00f5ff] hover:text-[#ff0080]'
+                  ? 'text-[var(--pulp-red)] heroic-glow'
+                  : 'text-[var(--pulp-blue)] hover:text-[var(--pulp-red)]'
               }`}
               title="Thumbs Down"
             >
@@ -126,7 +126,7 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleLinkClick}
-              className="text-[#00f5ff] hover:text-[#00ff88] transition-all duration-200 hover:scale-110 neon-glow ml-1"
+              className="text-[var(--pulp-blue)] hover:text-[var(--pulp-orange)] transition-all duration-200 hover:scale-110 heroic-glow ml-1"
             >
               <ExternalLink className="w-5 h-5" />
             </a>
@@ -138,11 +138,11 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
           {news.summary}
         </p>
         <div className="flex items-center justify-between text-xs mt-auto">
-          <span className="text-[#00f5ff] font-medium font-['var(--font-share-tech-mono)'] bg-[#00f5ff]/10 px-2 py-1 rounded border border-[#00f5ff]/30">
+          <span className="text-[var(--pulp-blue)] font-medium font-['var(--font-share-tech-mono)'] bg-[var(--pulp-blue)]/10 px-2 py-1 rounded border border-[var(--pulp-blue)]/30">
             {news.source}
           </span>
-          <div className="flex items-center gap-1 text-muted-foreground font-['var(--font-share-tech-mono)']">
-            <Clock className="w-3 h-3 text-[#ff0080]" />
+          <div className="flex items-center gap-4 text-muted-foreground font-['var(--font-share-tech-mono)'] pl-4">
+            <Clock className="w-3 h-3 text-[var(--pulp-red)]" />
             <span>{formatDate(news.publishedAt)}</span>
           </div>
         </div>

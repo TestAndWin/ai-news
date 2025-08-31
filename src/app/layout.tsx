@@ -25,8 +25,8 @@ const shareTechMono = Share_Tech_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI News Terminal - Cyberpunk News Aggregator",
-  description: "Futuristic AI news aggregator with cyberpunk design - Tech, Research & Business news",
+  title: "AI News",
+  description: "Futuristic AI news aggregator - Tech, Research & Business news",
 };
 
 export default function RootLayout({
