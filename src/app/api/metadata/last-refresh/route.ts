@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getLastRefreshTimestamp, setLastRefreshTimestamp, formatTimestamp, getRelativeTime } from '@/lib/metadata'
 import { withAuth } from '@/lib/api-auth'
+import { type TokenPayload } from '@/lib/jwt'
 
 async function handleGET() {
   try {
@@ -22,7 +23,7 @@ async function handleGET() {
 
 export const GET = withAuth(handleGET)
 
-async function handlePOST(request: NextRequest, tokenPayload: any) {
+async function handlePOST(request: NextRequest, _tokenPayload: TokenPayload) {
   try {
     const body = await request.json()
     const timestamp = body.timestamp ? new Date(body.timestamp) : new Date()
