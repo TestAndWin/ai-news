@@ -4,6 +4,8 @@ An intelligent news aggregation platform with a futuristic terminal interface th
 
 ## 🚀 Features
 
+- **JWT Authentication**: Secure login system with automatic token refresh and httpOnly cookies
+- **Route Protection**: Middleware-based authentication for both frontend and API routes
 - **Multi-Source Aggregation**: Collects news from 40+ leading tech, research, and business sources
 - **Smart Curation**: Intelligent algorithm for freshness score and source priority
 - **Interactive News Cards**: Click tracking and rating system (Thumbs Up/Down)
@@ -12,14 +14,15 @@ An intelligent news aggregation platform with a futuristic terminal interface th
   - Research & Science
   - Business & Society
 - **Futuristic UI**: Matrix-Rain effect with neon styling and cyberpunk aesthetics
-- **Real-time Updates**: Refresh button for manual updates
+- **Real-time Updates**: Authenticated refresh system
 - **Filter Options**: Show/Hide read news and uninteresting articles
 
 ## 🛠 Tech Stack
 
-- **Frontend**: Next.js 14 (App Router) + TypeScript + Tailwind CSS + shadcn/ui
+- **Frontend**: Next.js 15 (App Router) + TypeScript + Tailwind CSS + shadcn/ui
 - **Backend**: Next.js API Routes (Edge/Node)
-- **Database**: SQLite via Prisma ORM
+- **Database**: SQLite (development) / PostgreSQL (production) via Prisma ORM
+- **Authentication**: JWT tokens with httpOnly cookies + route protection middleware
 - **News Fetching**: RSS Parser + Web Scraping (Puppeteer + Cheerio)
 - **UI Components**: Radix UI + Lucide Icons
 - **Styling**: Tailwind CSS with Custom Neon Effects
@@ -33,21 +36,27 @@ ai-news/
 ├── prisma/
 │   ├── schema.prisma         # Database Schema
 │   └── dev.db               # SQLite Database
+├── middleware.ts              # Route Protection Middleware
 ├── src/
 │   ├── app/
 │   │   ├── api/             # Next.js API Routes
+│   │   │   ├── auth/        # Authentication Endpoints
 │   │   │   ├── metadata/    # App Metadata
 │   │   │   ├── news/        # News CRUD Operations
 │   │   │   └── news-item/   # Individual News Item Actions
+│   │   ├── login/           # Login Page
 │   │   ├── layout.tsx
 │   │   └── page.tsx         # Main UI
 │   ├── components/
-│   │   ├── Header.tsx       # App Header with Refresh
+│   │   ├── Header.tsx       # App Header with Refresh & Logout
 │   │   ├── MatrixRain.tsx   # Background Effect
 │   │   ├── NewsCard.tsx     # Individual News Card
 │   │   ├── NewsGrid.tsx     # Grid Layout for News
 │   │   └── ui/              # shadcn/ui Components
 │   └── lib/
+│       ├── api-auth.ts      # JWT Authentication Wrapper
+│       ├── api-client.ts    # Client-side API with Auto Auth
+│       ├── jwt.ts           # JWT Utilities
 │       ├── db.ts            # Prisma Client
 │       ├── news-fetcher.ts  # News Aggregation Logic
 │       ├── web-scraper.ts   # Web Scraping Engine
@@ -75,10 +84,12 @@ ai-news/
    npx prisma db push
    ```
 
-4. **Environment Variables** (optional):
+4. **Environment Variables**:
    ```bash
-   # .env.local
+   # .env.local (Development)
    DATABASE_URL="file:./dev.db"
+   AUTH_PASSWORD="your-secure-password"      # Default: "password"
+   JWT_SECRET="your-jwt-secret-key"          # Required for JWT signing
    ```
 
 5. **Start Development Server**:
@@ -86,7 +97,10 @@ ai-news/
    npm run dev
    ```
 
-6. **Open App**: [http://localhost:3000](http://localhost:3000)
+6. **Login**: Navigate to [http://localhost:3000/login](http://localhost:3000/login) 
+   - Default password: `password` (configurable via `AUTH_PASSWORD`)
+
+7. **Access App**: [http://localhost:3000](http://localhost:3000) (requires authentication)
 
 ## 📡 News Sources
 
@@ -151,12 +165,18 @@ AppMetadata {
 
 ## 🚀 API Endpoints
 
-- `GET /api/news` - All curated news
-- `GET /api/news/[category]` - News by category
-- `POST /api/news/fetch` - Manual news refresh
-- `PATCH /api/news-item/[id]/click` - Mark news as read
-- `PATCH /api/news-item/[id]/rate` - Rate news article
-- `GET /api/metadata/last-refresh` - Last refresh timestamp
+### Authentication
+- `POST /api/auth/login` - Login with password
+- `POST /api/auth/logout` - Logout and clear tokens
+- `POST /api/auth/refresh` - Refresh JWT tokens
+
+### News (Protected)
+- `GET /api/news` - All curated news (requires authentication)
+- `GET /api/news/[category]` - News by category (requires authentication)
+- `POST /api/news/fetch` - Manual news refresh (requires authentication)
+- `PATCH /api/news-item/[id]/click` - Mark news as read (requires authentication)
+- `PATCH /api/news-item/[id]/rate` - Rate news article (requires authentication)
+- `GET /api/metadata/last-refresh` - Last refresh timestamp (requires authentication)
 
 ## 📝 Scripts
 
@@ -181,7 +201,48 @@ Tech & Product News:
 
 ## 🚀 Deployment
 
-The app can be deployed on Vercel, Railway, or other Next.js-compatible platforms. SQLite database is included.
+### Production Environment Variables
+
+For production deployment (Vercel, Railway, etc.), set these environment variables:
+
+```bash
+# Authentication (Required)
+AUTH_PASSWORD="your-secure-production-password"
+JWT_SECRET="your-long-secure-jwt-secret-key-minimum-32-chars"
+
+# Database (Production - PostgreSQL)
+DATABASE_URL="postgresql://user:password@host:port/database"
+POSTGRES_URL="postgresql://user:password@host:port/database"
+POSTGRES_PRISMA_URL="postgresql://user:password@host:port/database?pgbouncer=true&connect_timeout=15"
+POSTGRES_URL_NO_SSL="postgresql://user:password@host:port/database"
+POSTGRES_URL_NON_POOLING="postgresql://user:password@host:port/database"
+POSTGRES_USER="your-db-user"
+POSTGRES_HOST="your-db-host"
+POSTGRES_PASSWORD="your-db-password"
+POSTGRES_DATABASE="your-db-name"
+
+# Optional
+NODE_ENV="production"
+```
+
+### Vercel Deployment
+
+1. **Push to GitHub**: Commit your changes and push to GitHub
+2. **Connect to Vercel**: Import your repository in Vercel dashboard
+3. **Add PostgreSQL**: Add Vercel PostgreSQL storage to your project
+4. **Set Environment Variables**: Add the required variables in Vercel dashboard
+5. **Deploy**: Vercel will automatically build and deploy
+
+### Manual Production Setup
+
+1. **Install Dependencies**: `npm install`
+2. **Set Environment Variables**: Configure production variables
+3. **Generate Prisma Client**: `npm run prisma:generate:production`
+4. **Deploy Database**: `npm run prisma:deploy:production`
+5. **Build Application**: `npm run build`
+6. **Start Production Server**: `npm run start`
+
+The app supports both SQLite (development) and PostgreSQL (production) databases automatically based on the `DATABASE_URL` environment variable.
 
 ## 📄 License
 

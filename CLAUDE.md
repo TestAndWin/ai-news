@@ -4,9 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Technology Stack
 
-* Frontend: Next.js 14 (App Router) + TypeScript + Tailwind + shadcn/ui
+* Frontend: Next.js 15 (App Router) + TypeScript + Tailwind + shadcn/ui
 * Backend: Next.js API Routes (Edge/Node)
-* Database: SQLite (local) via Prisma ORM
+* Database: SQLite (local) / PostgreSQL (production) via Prisma ORM
+* Authentication: JWT tokens with httpOnly cookies + route protection middleware
 * News Fetching: RSS Parser + Web Scraping (Puppeteer + Cheerio)
 
 Use context7.com MCP to find the latest documentation for these technologies.
@@ -27,9 +28,13 @@ npm run prisma:deploy:production    # Deploy migrations to PostgreSQL (productio
 npx prisma db push     # Push schema changes to database
 npx prisma studio      # Open database GUI
 
-# News Fetching (via API during development)
-curl -X POST "http://localhost:3000/api/news/fetch?api_key=dev-api-key-change-in-production"
-curl -X POST "http://localhost:3000/api/news/fetch?source=SOURCE_NAME&api_key=dev-api-key-change-in-production"
+# Authentication (development)
+# Login to get JWT tokens (stored as httpOnly cookies)
+curl -X POST "http://localhost:3000/api/auth/login" -H "Content-Type: application/json" -d '{"password":"password"}'
+
+# News Fetching (via API - requires authentication)
+curl -X POST "http://localhost:3000/api/news/fetch" -H "Cookie: access_token=YOUR_TOKEN" 
+curl -X POST "http://localhost:3000/api/news/fetch?source=SOURCE_NAME" -H "Cookie: access_token=YOUR_TOKEN"
 ```
 
 ## Architecture Overview
@@ -49,11 +54,19 @@ This is an AI news aggregation platform with intelligent curation. The architect
 - **Categories**: TECH_PRODUCT, RESEARCH_SCIENCE, BUSINESS_SOCIETY
 - **User Interactions**: Click tracking (`clicked: Boolean`) and rating system (`rating: 1|2|null`)
 
+### Authentication & Security
+- **JWT Authentication**: Access tokens (1h) + Refresh tokens (7d) stored as httpOnly cookies
+- **Route Protection**: Middleware protects frontend routes, redirects unauthenticated users to login
+- **API Protection**: All API endpoints require JWT authentication (with API key fallback for backward compatibility)
+- **Automatic Token Refresh**: Client-side API client handles token refresh transparently
+- **Login Flow**: Simple password-based authentication (configurable via AUTH_PASSWORD env var)
+
 ### API Architecture
 - `fetchAllNews()` vs `fetchSingleSource(sourceName)` in `src/lib/news-fetcher.ts`
-- Authentication via `x-api-key` header or `api_key` query param
+- JWT-based authentication with automatic token refresh and httpOnly cookie storage
 - Rate limiting applied to fetch endpoints
 - CRUD operations for news items and metadata
+- API client (`src/lib/api-client.ts`) handles authentication, retries, and error handling
 
 ### Frontend Structure
 - **Main UI**: Single page with Matrix rain background effect
@@ -64,8 +77,13 @@ This is an AI news aggregation platform with intelligent curation. The architect
 ### Key Files for Development
 - `src/lib/news-fetcher.ts` - Core news aggregation logic and curation algorithm
 - `src/lib/web-scraper.ts` - Puppeteer-based scraping engine with site-specific selectors
-- `src/lib/api-auth.ts` - API authentication wrapper
+- `src/lib/api-auth.ts` - JWT authentication wrapper with API protection functions
+- `src/lib/jwt.ts` - JWT token generation, validation, and utility functions
+- `src/lib/api-client.ts` - Client-side API utility with automatic authentication and token refresh
 - `src/lib/db.ts` - Database configuration with environment detection
+- `middleware.ts` - Route protection middleware for frontend authentication
+- `src/app/login/page.tsx` - Login page with cyberpunk styling
+- `src/app/api/auth/` - Authentication endpoints (login, logout, refresh)
 - `config/sources.yaml` - News sources configuration (edit here to add sources)
 - `prisma/schema.prisma` - SQLite database schema (development)
 - `prisma/schema.postgresql.prisma` - PostgreSQL database schema (production)
@@ -73,9 +91,10 @@ This is an AI news aggregation platform with intelligent curation. The architect
 ### Testing News Sources
 When adding new sources to `config/sources.yaml`:
 1. Start dev server: `npm run dev`
-2. Test single source: `curl -X POST "http://localhost:3000/api/news/fetch?source=SOURCE_NAME&api_key=dev-api-key-change-in-production"`
-3. Check server logs for scraping success/errors
-4. Sources without RSS feeds will automatically use web scraping
+2. Login via browser at `http://localhost:3000/login` (password: "password" by default)
+3. Test single source via UI refresh or curl with JWT token
+4. Check server logs for scraping success/errors
+5. Sources without RSS feeds will automatically use web scraping
 
 ### Web Scraping Notes
 - Uses Puppeteer with Chromium for dynamic content
