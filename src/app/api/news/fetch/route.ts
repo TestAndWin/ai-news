@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { fetchAllNews, fetchSingleSource } from '@/lib/news-fetcher'
 import { withAuth } from '@/lib/api-auth'
 import { withRateLimit } from '@/lib/rate-limiter'
-import { type TokenPayload } from '@/lib/jwt'
 
-async function handlePOST(request: NextRequest, _tokenPayload: TokenPayload) {
+async function handlePOST(request: NextRequest) {
   try {
     const url = new URL(request.url)
     const source = url.searchParams.get('source')
