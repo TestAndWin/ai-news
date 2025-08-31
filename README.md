@@ -206,37 +206,45 @@ Tech & Product News:
 For production deployment (Vercel, Railway, etc.), set these environment variables:
 
 ```bash
-# Authentication (Required)
+# Authentication (Required - Set these manually in Vercel dashboard)
 AUTH_PASSWORD="your-secure-production-password"
 JWT_SECRET="your-long-secure-jwt-secret-key-minimum-32-chars"
 
-# Database (Production - PostgreSQL)
-DATABASE_URL="postgresql://user:password@host:port/database"
-POSTGRES_URL="postgresql://user:password@host:port/database"
-POSTGRES_PRISMA_URL="postgresql://user:password@host:port/database?pgbouncer=true&connect_timeout=15"
-POSTGRES_URL_NO_SSL="postgresql://user:password@host:port/database"
-POSTGRES_URL_NON_POOLING="postgresql://user:password@host:port/database"
-POSTGRES_USER="your-db-user"
-POSTGRES_HOST="your-db-host"
-POSTGRES_PASSWORD="your-db-password"
-POSTGRES_DATABASE="your-db-name"
-
-# Optional
-NODE_ENV="production"
+# Database (Auto-configured by Vercel when you add PostgreSQL storage)
+# These are set automatically by Vercel - do not set manually:
+# DATABASE_URL, POSTGRES_URL, POSTGRES_PRISMA_URL, etc.
 ```
 
 ### Vercel Deployment
 
 1. **Push to GitHub**: Commit your changes and push to GitHub
 2. **Connect to Vercel**: Import your repository in Vercel dashboard
-3. **Add PostgreSQL**: Add Vercel PostgreSQL storage to your project
-4. **Set Environment Variables**: Add the required variables in Vercel dashboard
+3. **Add PostgreSQL**: Add Vercel PostgreSQL storage to your project (this auto-configures all database variables)
+4. **Set Environment Variables**: Only set these two variables in Vercel dashboard:
+   - `AUTH_PASSWORD`: Your secure login password
+   - `JWT_SECRET`: A long, secure secret key (minimum 32 characters)
 5. **Deploy**: Vercel will automatically build and deploy
 
-### Manual Production Setup
+### Manual Production Setup (Non-Vercel)
 
+For other platforms (Railway, Render, etc.), you'll need to set all database variables manually:
+
+```bash
+# Authentication
+AUTH_PASSWORD="your-secure-production-password"
+JWT_SECRET="your-long-secure-jwt-secret-key-minimum-32-chars"
+
+# Database (PostgreSQL)
+DATABASE_URL="postgresql://user:password@host:port/database"
+POSTGRES_URL="postgresql://user:password@host:port/database"
+POSTGRES_PRISMA_URL="postgresql://user:password@host:port/database?pgbouncer=true&connect_timeout=15"
+POSTGRES_URL_NO_SSL="postgresql://user:password@host:port/database"
+POSTGRES_URL_NON_POOLING="postgresql://user:password@host:port/database"
+```
+
+**Deployment Steps:**
 1. **Install Dependencies**: `npm install`
-2. **Set Environment Variables**: Configure production variables
+2. **Set Environment Variables**: Configure all variables above
 3. **Generate Prisma Client**: `npm run prisma:generate:production`
 4. **Deploy Database**: `npm run prisma:deploy:production`
 5. **Build Application**: `npm run build`
