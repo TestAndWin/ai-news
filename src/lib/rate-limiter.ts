@@ -12,6 +12,16 @@ const rateLimitMap = new Map<string, RateLimitEntry>()
 const RATE_LIMIT_MAX = 10
 const RATE_LIMIT_WINDOW = 60 * 1000 // 1 minute in milliseconds
 
+// Clean up expired entries every 5 minutes
+setInterval(() => {
+  const now = Date.now()
+  for (const [key, entry] of rateLimitMap.entries()) {
+    if (now > entry.resetTime) {
+      rateLimitMap.delete(key)
+    }
+  }
+}, 5 * 60 * 1000)
+
 function getClientIP(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for')
   const realIP = request.headers.get('x-real-ip')

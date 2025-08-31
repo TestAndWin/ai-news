@@ -35,7 +35,7 @@ export function generateRefreshToken(userId: string, tokenVersion: number = 1): 
 export function verifyAccessToken(token: string): TokenPayload | null {
   try {
     return jwt.verify(token, JWT_SECRET) as TokenPayload
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -43,7 +43,7 @@ export function verifyAccessToken(token: string): TokenPayload | null {
 export function verifyRefreshToken(token: string): RefreshTokenPayload | null {
   try {
     return jwt.verify(token, JWT_REFRESH_SECRET) as RefreshTokenPayload
-  } catch (error) {
+  } catch {
     return null
   }
 }

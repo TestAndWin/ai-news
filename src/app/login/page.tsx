@@ -26,7 +26,7 @@ export default function LoginPage() {
       } else {
         setError('ACCESS DENIED - INVALID CREDENTIALS')
       }
-    } catch (error) {
+    } catch {
       setError('SYSTEM ERROR - CONNECTION FAILED')
     } finally {
       setIsLoading(false)
