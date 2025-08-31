@@ -76,29 +76,46 @@ class ApiClient {
     return response
   }
 
-  // Convenience methods
-  get(url: string, options: RequestOptions = {}) {
-    return this.apiRequest(url, { ...options, method: 'GET' })
+  // Convenience methods that return parsed JSON
+  async get(url: string, options: RequestOptions = {}) {
+    const response = await this.apiRequest(url, { ...options, method: 'GET' })
+    if (!response.ok) {
+      // Authentication failures are handled by apiRequest, so we shouldn't reach here for 401s
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    return response.json()
   }
     
-  post(url: string, data?: unknown, options: RequestOptions = {}) {
-    return this.apiRequest(url, { 
+  async post(url: string, data?: unknown, options: RequestOptions = {}) {
+    const response = await this.apiRequest(url, { 
       ...options, 
       method: 'POST', 
       body: data ? JSON.stringify(data) : undefined 
     })
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    return response.json()
   }
     
-  patch(url: string, data?: unknown, options: RequestOptions = {}) {
-    return this.apiRequest(url, { 
+  async patch(url: string, data?: unknown, options: RequestOptions = {}) {
+    const response = await this.apiRequest(url, { 
       ...options, 
       method: 'PATCH', 
       body: data ? JSON.stringify(data) : undefined 
     })
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    return response.json()
   }
     
-  delete(url: string, options: RequestOptions = {}) {
-    return this.apiRequest(url, { ...options, method: 'DELETE' })
+  async delete(url: string, options: RequestOptions = {}) {
+    const response = await this.apiRequest(url, { ...options, method: 'DELETE' })
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    return response.json()
   }
 
   // Authentication methods

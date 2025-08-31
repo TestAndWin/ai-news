@@ -72,30 +72,26 @@ export default function Home() {
 
   const fetchLastRefresh = async () => {
     try {
-      const response = await fetch('/api/metadata/last-refresh')
-      if (response.ok) {
-        const data = await response.json()
-        if (data.formatted && data.relative) {
-          setLastRefresh({
-            formatted: data.formatted,
-            relative: data.relative
-          })
-        }
+      const data = await api.get('/api/metadata/last-refresh')
+      if (data.formatted && data.relative) {
+        setLastRefresh({
+          formatted: data.formatted,
+          relative: data.relative
+        })
       }
     } catch (error) {
       console.error('Error fetching last refresh timestamp:', error)
+      // API client handles authentication failures automatically
     }
   }
 
   const fetchNews = async () => {
     try {
-      const response = await fetch('/api/news')
-      if (response.ok) {
-        const data = await response.json()
-        setNews(data)
-      }
+      const data = await api.get('/api/news')
+      setNews(data)
     } catch (error) {
       console.error('Error fetching news:', error)
+      // API client handles authentication failures automatically
     } finally {
       setIsLoading(false)
       setIsRefreshing(false)
