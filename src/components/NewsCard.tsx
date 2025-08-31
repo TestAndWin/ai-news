@@ -41,14 +41,11 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
       
       // Track click in database
       try {
-        const response = await api.patch(`/api/news-item/${news.id}/click`)
+        // API client now returns parsed JSON data on success
+        await api.patch(`/api/news-item/${news.id}/click`)
         
-        if (response.ok) {
-          // Notify parent component of successful click
-          onNewsClicked?.(news.id)
-        } else {
-          console.error('Failed to track click:', response.status, response.statusText)
-        }
+        // If we reach here, the request was successful
+        onNewsClicked?.(news.id)
       } catch (error) {
         console.error('Failed to track click:', error)
         // Don't revert UI state as the user already navigated away
@@ -65,16 +62,11 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
     
     // Update rating in database
     try {
-      const response = await api.patch(`/api/news-item/${news.id}/rate`, { rating: newRating })
+      // API client now returns parsed JSON data on success
+      await api.patch(`/api/news-item/${news.id}/rate`, { rating: newRating })
       
-      if (response.ok) {
-        // Notify parent component of successful rating
-        onNewsRated?.(news.id, newRating)
-      } else {
-        console.error('Failed to update rating:', response.status, response.statusText)
-        // Revert UI state on error
-        setCurrentRating(currentRating)
-      }
+      // If we reach here, the request was successful
+      onNewsRated?.(news.id, newRating)
     } catch (error) {
       console.error('Failed to update rating:', error)
       // Revert UI state on error
