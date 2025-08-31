@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateTokenPair } from '@/lib/jwt'
+import { handleApiError, ApiError, ApiErrorType } from '@/lib/api-errors'
 
 const AUTH_PASSWORD = process.env.AUTH_PASSWORD || 'password'
 
@@ -8,9 +9,10 @@ export async function POST(request: NextRequest) {
     const { password } = await request.json()
     
     if (!password || password !== AUTH_PASSWORD) {
-      return NextResponse.json(
-        { error: 'Invalid password' },
-        { status: 401 }
+      throw new ApiError(
+        ApiErrorType.AUTHENTICATION_ERROR,
+        'Invalid credentials provided',
+        401
       )
     }
     
@@ -43,10 +45,7 @@ export async function POST(request: NextRequest) {
     
     return response
     
-  } catch {
-    return NextResponse.json(
-      { error: 'Invalid request format' },
-      { status: 400 }
-    )
+  } catch (error) {
+    return handleApiError(error)
   }
 }

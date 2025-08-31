@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { fetchAllNews, fetchSingleSource } from '@/lib/news-fetcher'
 import { withAuth } from '@/lib/api-auth'
 import { withRateLimit } from '@/lib/rate-limiter'
+import { handleApiError, ApiError, ApiErrorType } from '@/lib/api-errors'
 
 async function handlePOST(request: NextRequest) {
   try {
@@ -12,9 +13,11 @@ async function handlePOST(request: NextRequest) {
     if (source) {
       // Basic validation - only allow alphanumeric and common separators
       if (!/^[a-zA-Z0-9\s\-_.&]+$/.test(source)) {
-        return NextResponse.json(
-          { success: false, error: 'Invalid source parameter' },
-          { status: 400 }
+        throw new ApiError(
+          ApiErrorType.VALIDATION_ERROR,
+          'Invalid source parameter format',
+          400,
+          { allowedPattern: 'alphanumeric, spaces, hyphens, underscores, dots, and ampersands' }
         )
       }
       
@@ -25,11 +28,7 @@ async function handlePOST(request: NextRequest) {
       return NextResponse.json({ success: true, message: 'News fetched successfully' })
     }
   } catch (error) {
-    console.error('Error fetching news:', error)
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch news' },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }
 

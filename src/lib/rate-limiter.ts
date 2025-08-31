@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { CommonErrors, handleApiError } from './api-errors'
 
 // Simple in-memory rate limiter
 interface RateLimitEntry {
@@ -71,10 +72,7 @@ export function checkRateLimit(request: NextRequest): { allowed: boolean; remain
 }
 
 export function createRateLimitResponse(): NextResponse {
-  return NextResponse.json(
-    { error: 'Rate limit exceeded. Too many requests.' },
-    { status: 429 }
-  )
+  return handleApiError(CommonErrors.RATE_LIMITED)
 }
 
 export function withRateLimit<T extends unknown[]>(

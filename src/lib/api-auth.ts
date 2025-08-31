@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAccessToken, extractTokenFromBearer, type TokenPayload } from './jwt'
+import { CommonErrors, handleApiError } from './api-errors'
 
 export function validateJwtToken(request: NextRequest): TokenPayload | null {
   // Check Authorization header first
@@ -19,10 +20,7 @@ export function validateJwtToken(request: NextRequest): TokenPayload | null {
 }
 
 export function createUnauthorizedResponse(): NextResponse {
-  return NextResponse.json(
-    { error: 'Unauthorized. Valid JWT token required.' },
-    { status: 401 }
-  )
+  return handleApiError(CommonErrors.UNAUTHORIZED)
 }
 
 export function withAuth(handler: (request: NextRequest, tokenPayload: TokenPayload, ...args: unknown[]) => Promise<NextResponse>) {

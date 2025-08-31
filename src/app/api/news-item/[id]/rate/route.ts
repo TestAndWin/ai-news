@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { withAuth } from '@/lib/api-auth'
+import { handleApiError, ApiError, ApiErrorType, CommonErrors } from '@/lib/api-errors'
 
 async function handlePATCH(
   request: NextRequest,
@@ -21,17 +22,21 @@ async function handlePATCH(
 
     // Validate ID format (cuid format)
     if (!/^[a-z0-9]{25}$/.test(id)) {
-      return NextResponse.json(
-        { error: 'Invalid news item ID format' },
-        { status: 400 }
+      throw new ApiError(
+        ApiErrorType.VALIDATION_ERROR,
+        'Invalid news item ID format',
+        400,
+        { expectedFormat: 'CUID (25 character alphanumeric)' }
       )
     }
 
     // Validate rating value
     if (rating !== null && rating !== 1 && rating !== 2) {
-      return NextResponse.json(
-        { error: 'Invalid rating. Must be 1 (thumbs down), 2 (thumbs up), or null' },
-        { status: 400 }
+      throw new ApiError(
+        ApiErrorType.VALIDATION_ERROR,
+        'Invalid rating value',
+        400,
+        { validValues: [1, 2, null], description: '1 = thumbs down, 2 = thumbs up, null = remove rating' }
       )
     }
 
@@ -41,10 +46,7 @@ async function handlePATCH(
     })
 
     if (!newsItem) {
-      return NextResponse.json(
-        { error: 'News item not found' },
-        { status: 404 }
-      )
+      throw CommonErrors.NOT_FOUND
     }
 
     // Update the news item rating
@@ -62,11 +64,7 @@ async function handlePATCH(
 
     return response
   } catch (error) {
-    console.error('Error updating news rating:', error)
-    return NextResponse.json(
-      { error: 'Failed to update news rating' },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }
 

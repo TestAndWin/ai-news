@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { handleApiError } from '@/lib/api-errors'
 
 export async function POST() {
   try {
@@ -27,10 +28,7 @@ export async function POST() {
     
     return response
     
-  } catch {
-    return NextResponse.json(
-      { error: 'Logout failed' },
-      { status: 500 }
-    )
+  } catch (error) {
+    return handleApiError(error)
   }
 }
