@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { ExternalLink, Clock, ThumbsUp, ThumbsDown, Bookmark, BookmarkCheck, ArrowLeft, ArrowRight, Eye } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { api } from "@/lib/api-client"
 
 interface NewsItem {
@@ -43,12 +43,15 @@ export function SingleNewsView({
   const [isClicked, setIsClicked] = useState(news.clicked)
   const [currentRating, setCurrentRating] = useState(news.rating)
   const [isReadLater, setIsReadLater] = useState(news.readLater)
+  const navigationInProgress = useRef(false)
 
   // Sync local state with news prop changes (when navigating to different news)
   useEffect(() => {
     setIsClicked(news.clicked)
     setCurrentRating(news.rating)
     setIsReadLater(news.readLater)
+    // Reset navigation flag when news changes
+    navigationInProgress.current = false
   }, [news.id, news.clicked, news.rating, news.readLater])
 
   const formatDate = (date: Date) => {
@@ -70,9 +73,14 @@ export function SingleNewsView({
         onNewsClicked?.(news.id)
         
         // Auto-advance to next news after marking as read
-        setTimeout(() => {
-          onNext?.()
-        }, 1000)
+        if (!navigationInProgress.current) {
+          navigationInProgress.current = true
+          setTimeout(() => {
+            if (navigationInProgress.current) {
+              onNext?.()
+            }
+          }, 1000)
+        }
       } catch (error) {
         console.error('Failed to track click:', error)
       }
@@ -88,10 +96,14 @@ export function SingleNewsView({
       onNewsRated?.(news.id, newRating)
       
       // If thumbs down, auto-advance to next news
-      if (newRating === 1) {
+      if (newRating === 1 && !navigationInProgress.current) {
+        navigationInProgress.current = true
+        // Use setTimeout to avoid double-triggering with other navigation
         setTimeout(() => {
-          onNext?.()
-        }, 500)
+          if (navigationInProgress.current) {
+            onNext?.()
+          }
+        }, 100) // Reduced delay to avoid conflicts
       }
     } catch (error) {
       console.error('Failed to update rating:', error)
@@ -108,10 +120,13 @@ export function SingleNewsView({
       onReadLaterToggled?.(news.id, newReadLater)
       
       // If marking as read later, auto-advance to next news
-      if (newReadLater) {
+      if (newReadLater && !navigationInProgress.current) {
+        navigationInProgress.current = true
         setTimeout(() => {
-          onNext?.()
-        }, 500)
+          if (navigationInProgress.current) {
+            onNext?.()
+          }
+        }, 100)
       }
     } catch (error) {
       console.error('Failed to update read later status:', error)
