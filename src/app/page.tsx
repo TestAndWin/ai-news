@@ -230,10 +230,10 @@ export default function Home() {
     fetchLastRefresh()
   }, [fetchNews, fetchLastRefresh])
   
-  // Reset news index when view mode or news data changes
+  // Reset news index when view mode changes
   useEffect(() => {
     setCurrentNewsIndex(0)
-  }, [viewMode, news])
+  }, [viewMode])
 
   if (isLoading) {
     return (
