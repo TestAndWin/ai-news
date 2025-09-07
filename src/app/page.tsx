@@ -63,7 +63,8 @@ export default function Home() {
     }
   }, [news, viewMode, showReadNews, showUninteresting])
 
-  const currentNews = getAllNewsItems()[currentNewsIndex]
+  const allNewsItems = getAllNewsItems()
+  const currentNews = allNewsItems[currentNewsIndex]
   
   const getCategoryForNews = useCallback((newsItem: NewsItem) => {
     if (news.techNews.find(item => item.id === newsItem?.id)) return 'TECH & PRODUCT'
@@ -115,17 +116,15 @@ export default function Home() {
   }, [])
 
   const handleNext = useCallback(() => {
-    const allNews = getAllNewsItems()
-    if (currentNewsIndex < allNews.length - 1) {
-      setCurrentNewsIndex(currentNewsIndex + 1)
-    }
-  }, [currentNewsIndex, getAllNewsItems])
+    setCurrentNewsIndex(prev => {
+      const allNews = getAllNewsItems()
+      return prev < allNews.length - 1 ? prev + 1 : prev
+    })
+  }, [getAllNewsItems])
 
   const handlePrevious = useCallback(() => {
-    if (currentNewsIndex > 0) {
-      setCurrentNewsIndex(currentNewsIndex - 1)
-    }
-  }, [currentNewsIndex])
+    setCurrentNewsIndex(prev => prev > 0 ? prev - 1 : prev)
+  }, [])
 
   const handleViewModeChange = useCallback((newMode: ViewMode) => {
     setViewMode(newMode)
@@ -280,7 +279,7 @@ export default function Home() {
               onNext={handleNext}
               onPrevious={handlePrevious}
               currentIndex={currentNewsIndex}
-              totalCount={getAllNewsItems().length}
+              totalCount={allNewsItems.length}
               category={getCategoryForNews(currentNews)}
             />
           ) : (
@@ -416,7 +415,7 @@ export default function Home() {
                                   viewMode === 'readLater' ? 'READ later' :
                                   viewMode === 'interesting' ? 'INTERESTING NEWS' :
                                   'ALL NEWS'} • 
-                {currentNews ? `News ${currentNewsIndex + 1} of ${getAllNewsItems().length}` : 'No news available'}
+                {currentNews ? `News ${currentNewsIndex + 1} of ${allNewsItems.length}` : 'No news available'}
               </p>
             </div>
           </div>
