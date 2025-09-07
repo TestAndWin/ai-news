@@ -123,7 +123,7 @@ export function SingleNewsView({
             className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="font-['var(--font-share-tech-mono)']">ZURÜCK</span>
+            <span className="font-['var(--font-share-tech-mono)']">PREVIOUS</span>
           </button>
           
           <div className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)']">
@@ -135,7 +135,7 @@ export function SingleNewsView({
             disabled={currentIndex >= totalCount - 1}
             className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
           >
-            <span className="font-['var(--font-share-tech-mono)']">WEITER</span>
+            <span className="font-['var(--font-share-tech-mono)']">NEXT</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -167,7 +167,7 @@ export function SingleNewsView({
               {isClicked && (
                 <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--pulp-orange)]/20 border border-[var(--pulp-orange)]/30">
                   <Eye className="w-4 h-4 text-[var(--pulp-orange)]" />
-                  <span className="text-[var(--pulp-orange)] font-['var(--font-share-tech-mono)'] text-sm font-medium">GELESEN</span>
+                  <span className="text-[var(--pulp-orange)] font-['var(--font-share-tech-mono)'] text-sm font-medium">READ</span>
                 </div>
               )}
             </div>
@@ -208,7 +208,7 @@ export function SingleNewsView({
           ) : (
             <Bookmark className="w-5 h-5" />
           )}
-          <span>{isReadLater ? 'GESPEICHERT' : 'SPÄTER LESEN'}</span>
+          <span>{isReadLater ? 'SAVED' : 'READ LATER'}</span>
         </button>
 
         <button
@@ -220,7 +220,7 @@ export function SingleNewsView({
           }`}
         >
           <ThumbsDown className="w-5 h-5" />
-          <span>NICHT INTERESSANT</span>
+          <span>NOT INTERESTED</span>
         </button>
 
         <a
@@ -231,7 +231,7 @@ export function SingleNewsView({
           className="flex items-center gap-3 px-8 py-3 rounded-lg border-2 border-[var(--pulp-orange)]/30 bg-[var(--pulp-orange)]/10 backdrop-blur-sm hover:border-[var(--pulp-orange)] hover:bg-[var(--pulp-orange)]/20 hover:shadow-[0_0_30px_var(--pulp-orange)] text-[var(--pulp-orange)] font-['var(--font-share-tech-mono)'] font-medium transition-all duration-300 hover:scale-105"
         >
           <ExternalLink className="w-5 h-5" />
-          <span>ARTIKEL LESEN</span>
+          <span>READ ARTICLE</span>
         </a>
 
         <button
@@ -243,13 +243,13 @@ export function SingleNewsView({
           }`}
         >
           <ThumbsUp className="w-5 h-5" />
-          <span>INTERESSANT</span>
+          <span>INTERESTING</span>
         </button>
       </div>
 
       {/* Keyboard shortcuts hint */}
       <div className="text-center mt-8 text-muted-foreground font-['var(--font-share-tech-mono)'] text-sm">
-        <p>Tastenkürzel: ← Zurück | → Weiter | Leertaste: Lesen | ↑ Interessant | ↓ Nicht interessant | B: Später lesen</p>
+        <p>Shortcuts: ← Previous | → Next | Space: Read | ↑ Interesting | ↓ Not interested | B: Read later</p>
       </div>
     </div>
   )

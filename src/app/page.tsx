@@ -291,8 +291,8 @@ export default function Home() {
               </h2>
               <p className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)']">
                 {viewMode === 'readLater' 
-                  ? 'Keine gespeicherten Artikel vorhanden'
-                  : 'Alle News wurden verarbeitet'}
+                  ? 'No saved articles available'
+                  : 'All news processed'}
               </p>
               <button
                 onClick={() => {
@@ -304,7 +304,7 @@ export default function Home() {
                 className="mt-6 flex items-center gap-2 mx-auto px-6 py-3 rounded-lg border-2 border-[var(--pulp-orange)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-orange)] text-[var(--pulp-orange)] font-['var(--font-share-tech-mono)'] transition-all duration-300"
               >
                 <RotateCcw className="w-5 h-5" />
-                ALLE NEWS ANZEIGEN
+                SHOW ALL NEWS
               </button>
             </div>
           )}
@@ -324,7 +324,7 @@ export default function Home() {
                 }`}
               >
                 <Eye className="w-5 h-5" />
-                <span>UNGELESENE NEWS</span>
+                <span>UNREAD NEWS</span>
               </button>
 
               <button
@@ -336,7 +336,7 @@ export default function Home() {
                 }`}
               >
                 <Bookmark className="w-5 h-5" />
-                <span>SPÄTER LESEN</span>
+                <span>READ LATER</span>
               </button>
 
               <button
@@ -348,7 +348,7 @@ export default function Home() {
                 }`}
               >
                 <Building2 className="w-5 h-5" />
-                <span>ALLE NEWS</span>
+                <span>ALL NEWS</span>
               </button>
             </div>
             
@@ -395,13 +395,13 @@ export default function Home() {
                 <div className="w-2 h-2 bg-[var(--pulp-orange)] rounded-full animate-pulse"></div>
               </div>
               <p className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)'] text-sm">
-                Single-News Modus • Cosmic intelligence network active
+                Single-News Mode • Cosmic intelligence network active
               </p>
               <p className="text-muted-foreground font-['var(--font-share-tech-mono)'] text-xs mt-2">
-                Aktueller Modus: {viewMode === 'unread' ? 'UNGELESENE NEWS' : 
-                                  viewMode === 'readLater' ? 'SPÄTER LESEN' :
-                                  'ALLE NEWS'} • 
-                {currentNews ? `News ${currentNewsIndex + 1} von ${getAllNewsItems().length}` : 'Keine News verfügbar'}
+                Current mode: {viewMode === 'unread' ? 'UNREAD NEWS' : 
+                                  viewMode === 'readLater' ? 'READ LATER' :
+                                  'ALL NEWS'} • 
+                {currentNews ? `News ${currentNewsIndex + 1} of ${getAllNewsItems().length}` : 'No news available'}
               </p>
             </div>
           </div>
