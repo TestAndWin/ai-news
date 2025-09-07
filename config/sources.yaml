@@ -26,9 +26,6 @@ Tech & Product News:
   - name: Ars Technica AI
     url: https://arstechnica.com/tag/artificial-intelligence/
     feed: null
-  - name: Wired AI
-    url: https://www.wired.com/tag/artificial-intelligence/
-    feed: null
   - name: Import AI (Jack Clark)
     url: https://jack-clark.net/
     feed: https://jack-clark.net/rss
@@ -61,9 +58,6 @@ Tech & Product News:
     feed: null
 
 Research & Science:
-  - name: MIT Technology Review AI
-    url: https://www.technologyreview.com/ai/
-    feed: https://www.technologyreview.com/feed/
   - name: BAIR Blog (Berkeley AI Research)
     url: https://bair.berkeley.edu/blog/
     feed: https://bair.berkeley.edu/blog/feed.xml
@@ -79,10 +73,6 @@ Research & Science:
   - name: Chip Huyen Blog
     url: https://huyenchip.com/blog/
     feed: https://huyenchip.com/feed.xml
-  - name: Simon Willison Blog
-    url: https://simonwillison.net/
-    feed: https://simonwillison.net/atom/everything/
-    categoryFilter: "AI" 
 
 Business & Society:
   - name: Ethan Mollick (One Useful Thing)

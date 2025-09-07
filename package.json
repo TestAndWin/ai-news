@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "npm run prisma:deploy:production && npm run prisma:generate:production && next build",
+    "build:dev": "npm run prisma:generate:dev && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "npm run prisma:generate:auto",
