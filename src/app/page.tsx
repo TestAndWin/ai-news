@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Header } from '@/components/Header'
 import { SingleNewsView } from '@/components/SingleNewsView'
 import { api } from '@/lib/api-client'
-import { Building2, Eye, EyeOff, ThumbsDown, ThumbsUp, Bookmark, RotateCcw } from 'lucide-react'
+import { Building2, Eye, EyeOff, ThumbsDown, ThumbsUp, Bookmark, RotateCcw, Star } from 'lucide-react'
 
 interface NewsItem {
   id: string
@@ -24,7 +24,7 @@ interface NewsData {
   businessNews: NewsItem[]
 }
 
-type ViewMode = 'unread' | 'readLater' | 'all'
+type ViewMode = 'unread' | 'readLater' | 'interesting' | 'all'
 
 export default function Home() {
   const [news, setNews] = useState<NewsData>({
@@ -52,6 +52,8 @@ export default function Home() {
         return allNews.filter(item => !item.clicked && (!item.rating || item.rating === 2))
       case 'readLater':
         return allNews.filter(item => item.readLater)
+      case 'interesting':
+        return allNews.filter(item => item.rating === 2)
       case 'all':
       default:
         return showReadNews && showUninteresting ? allNews :
@@ -290,9 +292,9 @@ export default function Home() {
                 MISSION COMPLETE
               </h2>
               <p className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)']">
-                {viewMode === 'readLater' 
-                  ? 'No saved articles available'
-                  : 'All news processed'}
+                {viewMode === 'readLater' ? 'No saved articles available' :
+                 viewMode === 'interesting' ? 'No interesting articles found' :
+                 'All news processed'}
               </p>
               <button
                 onClick={() => {
@@ -337,6 +339,18 @@ export default function Home() {
               >
                 <Bookmark className="w-5 h-5" />
                 <span>READ LATER</span>
+              </button>
+
+              <button
+                onClick={() => handleViewModeChange('interesting')}
+                className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 group font-['var(--font-share-tech-mono)'] font-medium ${
+                  viewMode === 'interesting'
+                    ? 'border-[var(--pulp-orange)] bg-[var(--pulp-orange)]/20 text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)]'
+                    : 'border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] text-[var(--pulp-blue)]'
+                }`}
+              >
+                <Star className="w-5 h-5" />
+                <span>INTERESTING NEWS</span>
               </button>
 
               <button
@@ -399,7 +413,8 @@ export default function Home() {
               </p>
               <p className="text-muted-foreground font-['var(--font-share-tech-mono)'] text-xs mt-2">
                 Current mode: {viewMode === 'unread' ? 'UNREAD NEWS' : 
-                                  viewMode === 'readLater' ? 'READ LATER' :
+                                  viewMode === 'readLater' ? 'READ later' :
+                                  viewMode === 'interesting' ? 'INTERESTING NEWS' :
                                   'ALL NEWS'} • 
                 {currentNews ? `News ${currentNewsIndex + 1} of ${getAllNewsItems().length}` : 'No news available'}
               </p>
