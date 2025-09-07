@@ -12,6 +12,7 @@ interface NewsItem {
   source: string
   clicked: boolean
   rating?: number | null
+  readLater: boolean
 }
 
 interface NewsCardProps {

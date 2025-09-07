@@ -20,12 +20,14 @@ model NewsItem {
   source      String
   clicked     Boolean  @default(false)
   rating      Int?     // 1 = thumbs down, 2 = thumbs up, null = not rated
+  readLater   Boolean  @default(false) // true = save for later reading
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([category])
   @@index([publishedAt])
   @@index([rating])
+  @@index([readLater])
 }
 
 model AppMetadata {

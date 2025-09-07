@@ -1,0 +1,1 @@
+* Liste mit nur thumbs up news anbieten, neuerste News zuerst.
