@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { ExternalLink, Clock, ThumbsUp, ThumbsDown, Bookmark, BookmarkCheck, ArrowLeft, ArrowRight, Eye } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { api } from "@/lib/api-client"
 
 interface NewsItem {
@@ -43,6 +43,13 @@ export function SingleNewsView({
   const [isClicked, setIsClicked] = useState(news.clicked)
   const [currentRating, setCurrentRating] = useState(news.rating)
   const [isReadLater, setIsReadLater] = useState(news.readLater)
+
+  // Sync local state with news prop changes (when navigating to different news)
+  useEffect(() => {
+    setIsClicked(news.clicked)
+    setCurrentRating(news.rating)
+    setIsReadLater(news.readLater)
+  }, [news.id, news.clicked, news.rating, news.readLater])
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('de-DE', {
