@@ -212,6 +212,19 @@ export default function Home() {
     }
   }, [currentNews, handleNewsClicked, handleNewsRated, handleReadLaterToggled, handleNext, handlePrevious, showScanResults, handleContinueFromScanResults])
 
+  const handleMarkAllRead = useCallback(async () => {
+    try {
+      const response = await api.post('/api/news/mark-all-read')
+      if (response.success) {
+        console.log(response.message)
+        // Refresh the current view to show updated counts
+        await fetchNews()
+      }
+    } catch (error) {
+      console.error('Error marking all articles as read:', error)
+    }
+  }, [fetchNews])
+
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true)
     try {
@@ -292,7 +305,7 @@ export default function Home() {
       )}
 
       <div className="relative z-10">
-        <Header onRefresh={handleRefresh} isRefreshing={isRefreshing} lastRefresh={lastRefresh} />
+        <Header onRefresh={handleRefresh} isRefreshing={isRefreshing} onMarkAllRead={handleMarkAllRead} lastRefresh={lastRefresh} />
         
         <main className="container mx-auto px-4 py-8">
           {currentNews ? (

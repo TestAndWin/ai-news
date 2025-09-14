@@ -1,17 +1,18 @@
 import { Button } from "@/components/ui/button"
-import { RefreshCw, Zap, LogOut } from "lucide-react"
+import { RefreshCw, Zap, LogOut, CheckCircle2 } from "lucide-react"
 import { api } from "@/lib/api-client"
 
 interface HeaderProps {
   onRefresh: () => void
   isRefreshing: boolean
+  onMarkAllRead: () => void
   lastRefresh?: {
     formatted: string
     relative: string
   } | null
 }
 
-export function Header({ onRefresh, isRefreshing, lastRefresh }: HeaderProps) {
+export function Header({ onRefresh, isRefreshing, onMarkAllRead, lastRefresh }: HeaderProps) {
   const handleLogout = async () => {
     await api.logout()
   }
@@ -62,9 +63,18 @@ export function Header({ onRefresh, isRefreshing, lastRefresh }: HeaderProps) {
             >
               {/* Button glow effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--pulp-orange)]/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
-              
+
               <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
               {isRefreshing ? 'SCANNING...' : 'COSMIC SCAN'}
+            </Button>
+
+            <Button
+              onClick={onMarkAllRead}
+              variant="outline"
+              className="border-2 border-[var(--pulp-blue)] bg-background/30 hover:bg-[var(--pulp-blue)]/10 hover:shadow-[0_0_30px_var(--pulp-blue)] font-['var(--font-share-tech-mono)'] text-[var(--pulp-blue)] transition-all duration-300 relative overflow-hidden"
+            >
+              <CheckCircle2 className="w-4 h-4 mr-2" />
+              MARK ALL READ
             </Button>
 
             <Button
