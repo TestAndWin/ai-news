@@ -36,7 +36,7 @@ export default function Home() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0)
   const [viewMode, setViewMode] = useState<ViewMode>('unread')
-  const [showReadNews, setShowReadNews] = useState(false)
+  const [showReadNews, setShowReadNews] = useState(true)
   const [showUninteresting, setShowUninteresting] = useState(false)
   const [lastRefresh, setLastRefresh] = useState<{
     formatted: string

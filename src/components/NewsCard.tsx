@@ -89,7 +89,7 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
   return (
     <Card
       onClick={handleCardClick}
-      className={`border-2 border-[var(--pulp-orange)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-orange)] hover:shadow-[0_0_30px_var(--pulp-orange),inset_0_0_20px_rgba(255,107,53,0.1)] transition-all duration-500 group relative overflow-hidden hologram news-card flex flex-col cursor-pointer ${isClicked ? 'opacity-70' : ''}`}>
+      className={`border-2 border-[var(--pulp-orange)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-orange)] hover:shadow-[0_0_30px_var(--pulp-orange),inset_0_0_20px_rgba(255,107,53,0.1)] transition-all duration-500 group relative overflow-hidden hologram news-card flex flex-col cursor-pointer ${isClicked ? 'opacity-85 border-[var(--pulp-blue)]/50' : ''}`}>
       {/* Corner accents */}
       <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[var(--pulp-blue)]"></div>
       <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[var(--pulp-red)]"></div>
