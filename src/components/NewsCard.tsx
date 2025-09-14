@@ -35,7 +35,12 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
     }).format(new Date(date))
   }
 
-  const handleLinkClick = async () => {
+  const handleLinkClick = async (e?: React.MouseEvent) => {
+    // Prevent event bubbling to the card click handler when called from link
+    if (e) {
+      e.stopPropagation()
+    }
+
     if (!isClicked) {
       // Optimistically update UI
       setIsClicked(true)
@@ -65,18 +70,21 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
     handleLinkClick()
   }
 
-  const handleRating = async (rating: number | null) => {
+  const handleRating = async (e: React.MouseEvent, rating: number | null) => {
+    // Prevent event bubbling to the card click handler
+    e.stopPropagation()
+
     // Toggle rating: if same rating clicked, remove it
     const newRating = currentRating === rating ? null : rating
-    
+
     // Optimistically update UI
     setCurrentRating(newRating)
-    
+
     // Update rating in database
     try {
       // API client now returns parsed JSON data on success
       await api.patch(`/api/news-item/${news.id}/rate`, { rating: newRating })
-      
+
       // If we reach here, the request was successful
       onNewsRated?.(news.id, newRating)
     } catch (error) {
@@ -112,7 +120,7 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
             
             {/* Rating buttons - always shown */}
             <button
-              onClick={() => handleRating(2)}
+              onClick={(e) => handleRating(e, 2)}
               className={`transition-all duration-200 hover:scale-110 ${
                 currentRating === 2
                   ? 'text-[var(--pulp-orange)] heroic-glow'
@@ -122,9 +130,9 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
             >
               <ThumbsUp className="w-4 h-4" />
             </button>
-            
+
             <button
-              onClick={() => handleRating(1)}
+              onClick={(e) => handleRating(e, 1)}
               className={`transition-all duration-200 hover:scale-110 ${
                 currentRating === 1
                   ? 'text-[var(--pulp-red)] heroic-glow'
@@ -139,7 +147,7 @@ export function NewsCard({ news, onNewsClicked, onNewsRated }: NewsCardProps) {
               href={news.url}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={handleLinkClick}
+              onClick={(e) => handleLinkClick(e)}
               className="text-[var(--pulp-blue)] hover:text-[var(--pulp-orange)] transition-all duration-200 hover:scale-110 heroic-glow ml-1"
             >
               <ExternalLink className="w-5 h-5" />
