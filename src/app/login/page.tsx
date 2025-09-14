@@ -36,13 +36,13 @@ export default function LoginPage() {
     <div className="min-h-screen relative overflow-hidden">
       <div className="flex items-center justify-center min-h-screen relative z-10 px-4">
         <div className="w-full max-w-md">
-          {/* Captain Future Header */}
+          {/* AI News Header */}
           <div className="mb-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Rocket className="w-8 h-8 text-[var(--pulp-orange)]" />
-              <div className="text-4xl font-bold text-[var(--pulp-orange)] glitch-effect font-['var(--font-orbitron)']" 
+              <div className="text-4xl font-bold text-[var(--pulp-orange)] glitch-effect font-['var(--font-orbitron)']"
                    style={{textShadow: '0 0 20px var(--pulp-orange), 0 0 40px var(--pulp-orange), 0 0 60px var(--pulp-yellow)'}}>
-                CAPTAIN FUTURE
+                AI NEWS
               </div>
             </div>
             <div className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)'] text-sm">
@@ -141,7 +141,7 @@ export default function LoginPage() {
           {/* Footer */}
           <div className="mt-8 text-center">
             <div className="text-muted-foreground font-['var(--font-share-tech-mono)'] text-xs">
-              CAPTAIN FUTURE AI NEWS • COSMIC INTELLIGENCE NETWORK v2.0
+              AI NEWS • COSMIC INTELLIGENCE NETWORK v2.0
             </div>
           </div>
         </div>

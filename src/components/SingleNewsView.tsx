@@ -64,14 +64,19 @@ export function SingleNewsView({
     }).format(new Date(date))
   }
 
-  const handleLinkClick = async () => {
+  const handleLinkClick = async (e?: React.MouseEvent) => {
+    // Prevent event bubbling to the card click handler when called from link
+    if (e) {
+      e.stopPropagation()
+    }
+
     if (!isClicked) {
       setIsClicked(true)
-      
+
       try {
         await api.patch(`/api/news-item/${news.id}/click`)
         onNewsClicked?.(news.id)
-        
+
         // Auto-advance to next news after marking as read
         if (!navigationInProgress.current) {
           navigationInProgress.current = true
@@ -87,14 +92,17 @@ export function SingleNewsView({
     }
   }
 
-  const handleRating = async (rating: number | null) => {
+  const handleRating = async (e: React.MouseEvent, rating: number | null) => {
+    // Prevent event bubbling to the card click handler
+    e.stopPropagation()
+
     const newRating = currentRating === rating ? null : rating
     setCurrentRating(newRating)
-    
+
     try {
       await api.patch(`/api/news-item/${news.id}/rate`, { rating: newRating })
       onNewsRated?.(news.id, newRating)
-      
+
       // If thumbs down, auto-advance to next news
       if (newRating === 1 && !navigationInProgress.current) {
         navigationInProgress.current = true
@@ -111,14 +119,17 @@ export function SingleNewsView({
     }
   }
 
-  const handleReadLaterToggle = async () => {
+  const handleReadLaterToggle = async (e: React.MouseEvent) => {
+    // Prevent event bubbling to the card click handler
+    e.stopPropagation()
+
     const newReadLater = !isReadLater
     setIsReadLater(newReadLater)
-    
+
     try {
       await api.patch(`/api/news-item/${news.id}/read-later`, { readLater: newReadLater })
       onReadLaterToggled?.(news.id, newReadLater)
-      
+
       // If marking as read later, auto-advance to next news
       if (newReadLater && !navigationInProgress.current) {
         navigationInProgress.current = true
@@ -132,6 +143,17 @@ export function SingleNewsView({
       console.error('Failed to update read later status:', error)
       setIsReadLater(isReadLater)
     }
+  }
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't trigger if clicking on buttons or links
+    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('a')) {
+      return
+    }
+
+    // Open article in new tab and track click
+    window.open(news.url, '_blank', 'noopener,noreferrer')
+    handleLinkClick()
   }
 
   return (
@@ -168,7 +190,9 @@ export function SingleNewsView({
       </div>
 
       {/* News Card */}
-      <Card className={`border-2 border-[var(--pulp-orange)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-orange)] hover:shadow-[0_0_30px_var(--pulp-orange),inset_0_0_20px_rgba(255,107,53,0.1)] transition-all duration-500 group relative overflow-hidden hologram news-card ${isClicked ? 'opacity-70' : ''}`}>
+      <Card
+        onClick={handleCardClick}
+        className={`border-2 border-[var(--pulp-orange)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-orange)] hover:shadow-[0_0_30px_var(--pulp-orange),inset_0_0_20px_rgba(255,107,53,0.1)] transition-all duration-500 group relative overflow-hidden hologram news-card cursor-pointer ${isClicked ? 'opacity-85 border-[var(--pulp-blue)]/50' : ''}`}>
         {/* Corner accents */}
         <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[var(--pulp-blue)]"></div>
         <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-[var(--pulp-red)]"></div>
@@ -218,7 +242,7 @@ export function SingleNewsView({
       {/* Action Buttons */}
       <div className="flex items-center justify-center gap-6 mt-8 flex-wrap">
         <button
-          onClick={handleReadLaterToggle}
+          onClick={(e) => handleReadLaterToggle(e)}
           className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 font-['var(--font-share-tech-mono)'] font-medium ${
             isReadLater
               ? 'border-[var(--pulp-orange)] bg-[var(--pulp-orange)]/20 text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)]'
@@ -234,7 +258,7 @@ export function SingleNewsView({
         </button>
 
         <button
-          onClick={() => handleRating(1)}
+          onClick={(e) => handleRating(e, 1)}
           className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 font-['var(--font-share-tech-mono)'] font-medium hover:scale-105 ${
             currentRating === 1
               ? 'border-[var(--pulp-red)] bg-[var(--pulp-red)]/20 text-[var(--pulp-red)] shadow-[0_0_20px_var(--pulp-red)]'
@@ -249,7 +273,7 @@ export function SingleNewsView({
           href={news.url}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={handleLinkClick}
+          onClick={(e) => handleLinkClick(e)}
           className="flex items-center gap-3 px-8 py-3 rounded-lg border-2 border-[var(--pulp-orange)]/30 bg-[var(--pulp-orange)]/10 backdrop-blur-sm hover:border-[var(--pulp-orange)] hover:bg-[var(--pulp-orange)]/20 hover:shadow-[0_0_30px_var(--pulp-orange)] text-[var(--pulp-orange)] font-['var(--font-share-tech-mono)'] font-medium transition-all duration-300 hover:scale-105"
         >
           <ExternalLink className="w-5 h-5" />
@@ -257,7 +281,7 @@ export function SingleNewsView({
         </a>
 
         <button
-          onClick={() => handleRating(2)}
+          onClick={(e) => handleRating(e, 2)}
           className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 font-['var(--font-share-tech-mono)'] font-medium hover:scale-105 ${
             currentRating === 2
               ? 'border-[var(--pulp-green)] bg-[var(--pulp-green)]/20 text-[var(--pulp-green)] shadow-[0_0_20px_var(--pulp-green)]'

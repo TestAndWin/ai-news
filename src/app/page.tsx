@@ -239,9 +239,9 @@ export default function Home() {
       <div className="min-h-screen relative overflow-hidden">
         <div className="flex items-center justify-center min-h-screen relative z-10">
           <div className="text-center">
-            <div className="text-5xl font-bold mb-6 text-[var(--pulp-orange)] glitch-effect font-['var(--font-orbitron)']" 
+            <div className="text-5xl font-bold mb-6 text-[var(--pulp-orange)] glitch-effect font-['var(--font-orbitron)']"
                  style={{textShadow: '0 0 20px var(--pulp-orange), 0 0 40px var(--pulp-orange), 0 0 60px var(--pulp-yellow)'}}>
-              CAPTAIN FUTURE
+              AI NEWS
             </div>
             <div className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)'] text-lg mb-4">
               <span className="typing-effect">COSMIC INTELLIGENCE NETWORK ACTIVATION</span>
@@ -403,7 +403,7 @@ export default function Home() {
               <div className="flex items-center justify-center gap-4 mb-4">
                 <div className="w-2 h-2 bg-[var(--pulp-orange)] rounded-full animate-pulse"></div>
                 <p className="text-[var(--pulp-orange)] text-lg font-['var(--font-orbitron)'] font-bold">
-                  CAPTAIN FUTURE AI NEWS
+                  AI NEWS
                 </p>
                 <div className="w-2 h-2 bg-[var(--pulp-orange)] rounded-full animate-pulse"></div>
               </div>
