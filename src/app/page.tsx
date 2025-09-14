@@ -45,22 +45,10 @@ export default function Home() {
   const [showScanResults, setShowScanResults] = useState(false)
   const [scanResults, setScanResults] = useState<CompleteScanResult | null>(null)
 
-  // Get all news items as flat array based on view mode
+  // Get all news items as flat array - no filtering needed as it's done by backend
   const getAllNewsItems = useCallback(() => {
-    const allNews = [...news.techNews, ...news.researchNews, ...news.businessNews]
-    
-    switch (viewMode) {
-      case 'unread':
-        return allNews.filter(item => !item.clicked && (!item.rating || item.rating === 2))
-      case 'readLater':
-        return allNews.filter(item => item.readLater)
-      case 'interesting':
-        return allNews.filter(item => item.rating === 2)
-      case 'all':
-      default:
-        return allNews
-    }
-  }, [news, viewMode])
+    return [...news.techNews, ...news.researchNews, ...news.businessNews]
+  }, [news])
 
   const allNewsItems = getAllNewsItems()
   const currentNews = allNewsItems[currentNewsIndex]
@@ -125,11 +113,6 @@ export default function Home() {
     setCurrentNewsIndex(prev => prev > 0 ? prev - 1 : prev)
   }, [])
 
-  const handleViewModeChange = useCallback((newMode: ViewMode) => {
-    setViewMode(newMode)
-    setCurrentNewsIndex(0)
-  }, [])
-
   const handleCloseScanResults = useCallback(() => {
     setShowScanResults(false)
     setScanResults(null)
@@ -139,6 +122,40 @@ export default function Home() {
     setShowScanResults(false)
     // Don't clear scan results in case user wants to view them again
   }, [])
+
+  const fetchLastRefresh = useCallback(async () => {
+    try {
+      const data = await api.get('/api/metadata/last-refresh')
+      if (data.formatted && data.relative) {
+        setLastRefresh({
+          formatted: data.formatted,
+          relative: data.relative
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching last refresh timestamp:', error)
+    }
+  }, [])
+
+  const fetchNews = useCallback(async (viewModeParam?: ViewMode) => {
+    try {
+      const currentViewMode = viewModeParam || viewMode
+      const data = await api.get(`/api/news?viewMode=${currentViewMode}`)
+      setNews(data)
+    } catch (error) {
+      console.error('Error fetching news:', error)
+    } finally {
+      setIsLoading(false)
+      setIsRefreshing(false)
+    }
+  }, [viewMode])
+
+  const handleViewModeChange = useCallback(async (newMode: ViewMode) => {
+    setViewMode(newMode)
+    setCurrentNewsIndex(0)
+    setIsLoading(true)
+    await fetchNews(newMode)
+  }, [fetchNews])
 
   // Keyboard shortcuts
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
@@ -194,32 +211,6 @@ export default function Home() {
       }
     }
   }, [currentNews, handleNewsClicked, handleNewsRated, handleReadLaterToggled, handleNext, handlePrevious, showScanResults, handleContinueFromScanResults])
-
-  const fetchLastRefresh = useCallback(async () => {
-    try {
-      const data = await api.get('/api/metadata/last-refresh')
-      if (data.formatted && data.relative) {
-        setLastRefresh({
-          formatted: data.formatted,
-          relative: data.relative
-        })
-      }
-    } catch (error) {
-      console.error('Error fetching last refresh timestamp:', error)
-    }
-  }, [])
-
-  const fetchNews = useCallback(async () => {
-    try {
-      const data = await api.get('/api/news')
-      setNews(data)
-    } catch (error) {
-      console.error('Error fetching news:', error)
-    } finally {
-      setIsLoading(false)
-      setIsRefreshing(false)
-    }
-  }, [])
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true)
@@ -330,10 +321,7 @@ export default function Home() {
                  'All news processed'}
               </p>
               <button
-                onClick={() => {
-                  setViewMode('all')
-                  setCurrentNewsIndex(0)
-                }}
+                onClick={() => handleViewModeChange('all')}
                 className="mt-6 flex items-center gap-2 mx-auto px-6 py-3 rounded-lg border-2 border-[var(--pulp-orange)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-orange)] text-[var(--pulp-orange)] font-['var(--font-share-tech-mono)'] transition-all duration-300"
               >
                 <RotateCcw className="w-5 h-5" />

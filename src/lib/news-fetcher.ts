@@ -434,3 +434,69 @@ export async function getAllNews() {
     businessNews,
   }
 }
+
+// New functions for unfiltered news retrieval based on view modes
+export async function getAllNewsUnfiltered() {
+  const allNews = await db.newsItem.findMany({
+    orderBy: { publishedAt: 'desc' },
+  })
+
+  return {
+    techNews: allNews.filter(item => item.category === Category.TECH_PRODUCT),
+    researchNews: allNews.filter(item => item.category === Category.RESEARCH_SCIENCE),
+    businessNews: allNews.filter(item => item.category === Category.BUSINESS_SOCIETY),
+  }
+}
+
+export async function getUnreadNews() {
+  const allNews = await db.newsItem.findMany({
+    where: {
+      AND: [
+        { clicked: false },
+        {
+          OR: [
+            { rating: null },
+            { rating: 2 }
+          ]
+        }
+      ]
+    },
+    orderBy: { publishedAt: 'desc' },
+  })
+
+  return {
+    techNews: allNews.filter(item => item.category === Category.TECH_PRODUCT),
+    researchNews: allNews.filter(item => item.category === Category.RESEARCH_SCIENCE),
+    businessNews: allNews.filter(item => item.category === Category.BUSINESS_SOCIETY),
+  }
+}
+
+export async function getReadLaterNews() {
+  const allNews = await db.newsItem.findMany({
+    where: {
+      readLater: true
+    },
+    orderBy: { publishedAt: 'desc' },
+  })
+
+  return {
+    techNews: allNews.filter(item => item.category === Category.TECH_PRODUCT),
+    researchNews: allNews.filter(item => item.category === Category.RESEARCH_SCIENCE),
+    businessNews: allNews.filter(item => item.category === Category.BUSINESS_SOCIETY),
+  }
+}
+
+export async function getInterestingNews() {
+  const allNews = await db.newsItem.findMany({
+    where: {
+      rating: 2
+    },
+    orderBy: { publishedAt: 'desc' },
+  })
+
+  return {
+    techNews: allNews.filter(item => item.category === Category.TECH_PRODUCT),
+    researchNews: allNews.filter(item => item.category === Category.RESEARCH_SCIENCE),
+    businessNews: allNews.filter(item => item.category === Category.BUSINESS_SOCIETY),
+  }
+}
