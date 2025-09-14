@@ -73,6 +73,17 @@ export function SingleNewsView({
     if (!isClicked) {
       setIsClicked(true)
 
+      // If this article was in "Read Later", remove it from that list
+      if (isReadLater) {
+        setIsReadLater(false)
+        try {
+          await api.patch(`/api/news-item/${news.id}/read-later`, { readLater: false })
+          onReadLaterToggled?.(news.id, false)
+        } catch (error) {
+          console.error('Failed to update read later status:', error)
+        }
+      }
+
       try {
         await api.patch(`/api/news-item/${news.id}/click`)
         onNewsClicked?.(news.id)
