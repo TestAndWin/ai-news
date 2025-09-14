@@ -19,6 +19,20 @@ interface SourceConfig {
   'Business & Society': Source[]
 }
 
+export interface ScanResult {
+  sourceName: string
+  newArticles: number
+  category: string
+  error?: string
+}
+
+export interface CompleteScanResult {
+  results: ScanResult[]
+  totalNewArticles: number
+  totalSources: number
+  processedSources: number
+}
+
 const parser = new RSSParser({
   customFields: {
     item: [
@@ -51,7 +65,7 @@ function truncateText(text: string, maxLength: number): string {
   return text.substring(0, maxLength - 3) + '...'
 }
 
-export async function fetchNewsFromRSS(feed: string, source: string, category: Category, categoryFilter?: string) {
+export async function fetchNewsFromRSS(feed: string, source: string, category: Category, categoryFilter?: string): Promise<{ newArticles: number; error?: string }> {
   try {
     const feedData = await parser.parseURL(feed)
     const items = feedData.items.slice(0, 15) // More items for better selection
@@ -123,18 +137,20 @@ export async function fetchNewsFromRSS(feed: string, source: string, category: C
         newArticlesCount++
       }
     }
-    
+
     console.log(`✅ RSS fetch complete for ${source}: ${newArticlesCount} new articles added`)
+    return { newArticles: newArticlesCount }
   } catch (error) {
     console.error(`❌ Error fetching RSS for ${source}:`, error)
+    return { newArticles: 0, error: String(error) }
   }
 }
 
-async function fetchNewsFromWebScraping(url: string, source: string, category: Category) {
+async function fetchNewsFromWebScraping(url: string, source: string, category: Category): Promise<{ newArticles: number; error?: string }> {
   try {
     const articles = await scrapeWebsite(url, source)
     console.log(`🔍 Processing ${articles.length} scraped articles from ${source}`)
-    
+
     let newArticlesCount = 0
     for (const article of articles) {
       if (!article.title || !article.url) continue
@@ -161,21 +177,24 @@ async function fetchNewsFromWebScraping(url: string, source: string, category: C
         console.log(`✅ Added scraped article: ${article.title.substring(0, 60)}...`)
       }
     }
-    
+
     console.log(`✅ Web scraping complete for ${source}: ${newArticlesCount} new articles added`)
+    return { newArticles: newArticlesCount }
   } catch (error) {
     console.error(`❌ Error scraping ${source}:`, error)
+    return { newArticles: 0, error: String(error) }
   }
 }
 
-export async function fetchSingleSource(sourceName: string) {
+export async function fetchSingleSource(sourceName: string): Promise<ScanResult> {
   try {
     console.log(`🚀 Starting news fetch for single source: ${sourceName}`)
     // Load cache
     await loadCache()
-    
+
     const sources = await loadSources()
     let sourceFound = false
+    let scanResult: ScanResult = { sourceName, newArticles: 0, category: 'Unknown' }
 
     for (const [categoryName, categorySourcesArray] of Object.entries(sources)) {
       const category = mapCategoryToEnum(categoryName)
@@ -183,12 +202,21 @@ export async function fetchSingleSource(sourceName: string) {
       for (const source of categorySourcesArray) {
         if (source.name === sourceName) {
           sourceFound = true
+
+          let result: { newArticles: number; error?: string }
           if (source.feed) {
             console.log(`📡 Fetching RSS news from ${source.name}...`)
-            await fetchNewsFromRSS(source.feed, source.name, category, source.categoryFilter)
+            result = await fetchNewsFromRSS(source.feed, source.name, category, source.categoryFilter)
           } else {
             console.log(`🔍 Scraping web content from ${source.name}...`)
-            await fetchNewsFromWebScraping(source.url, source.name, category)
+            result = await fetchNewsFromWebScraping(source.url, source.name, category)
+          }
+
+          scanResult = {
+            sourceName,
+            newArticles: result.newArticles,
+            category: categoryName,
+            error: result.error
           }
           break
         }
@@ -202,11 +230,12 @@ export async function fetchSingleSource(sourceName: string) {
 
     // Save cache
     await saveCache()
-    
+
     // Cleanup
     await cleanupScraper()
 
     console.log(`✅ News fetching completed for ${sourceName}`)
+    return scanResult
   } catch (error) {
     console.error(`❌ Error fetching news for ${sourceName}:`, error)
     // Cleanup also on errors
@@ -215,15 +244,18 @@ export async function fetchSingleSource(sourceName: string) {
   }
 }
 
-export async function fetchAllNews() {
+export async function fetchAllNews(): Promise<CompleteScanResult> {
+  const scanResults: ScanResult[] = []
+  let totalSources = 0
+  let processedSources = 0
+  let totalNewArticles = 0
+
   try {
     console.log(`🚀 Starting comprehensive news fetch from all sources`)
     // Load cache
     await loadCache()
-    
+
     const sources = await loadSources()
-    let totalSources = 0
-    let processedSources = 0
 
     // Count total sources
     for (const categorySourcesArray of Object.values(sources)) {
@@ -238,28 +270,54 @@ export async function fetchAllNews() {
       for (const source of categorySourcesArray) {
         processedSources++
         console.log(`[${processedSources}/${totalSources}] Processing ${source.name}`)
-        
+
+        let result: { newArticles: number; error?: string }
         if (source.feed) {
           console.log(`📡 Fetching RSS news from ${source.name}...`)
-          await fetchNewsFromRSS(source.feed, source.name, category, source.categoryFilter)
+          result = await fetchNewsFromRSS(source.feed, source.name, category, source.categoryFilter)
         } else {
           console.log(`🔍 Scraping web content from ${source.name}...`)
-          await fetchNewsFromWebScraping(source.url, source.name, category)
+          result = await fetchNewsFromWebScraping(source.url, source.name, category)
         }
+
+        const scanResult: ScanResult = {
+          sourceName: source.name,
+          newArticles: result.newArticles,
+          category: categoryName,
+          error: result.error
+        }
+
+        scanResults.push(scanResult)
+        totalNewArticles += result.newArticles
       }
     }
 
     // Save cache
     await saveCache()
-    
+
     // Cleanup
     await cleanupScraper()
 
     console.log(`✅ Comprehensive news fetching completed! Processed ${processedSources}/${totalSources} sources`)
+    console.log(`🔢 Total new articles found: ${totalNewArticles}`)
+
+    return {
+      results: scanResults,
+      totalNewArticles,
+      totalSources,
+      processedSources
+    }
   } catch (error) {
     console.error('❌ Error fetching news:', error)
     // Cleanup also on errors
     await cleanupScraper()
+
+    return {
+      results: scanResults,
+      totalNewArticles,
+      totalSources,
+      processedSources
+    }
   }
 }
 

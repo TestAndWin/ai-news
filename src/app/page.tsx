@@ -3,7 +3,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Header } from '@/components/Header'
 import { SingleNewsView } from '@/components/SingleNewsView'
+import { ScanResults } from '@/components/ScanResults'
 import { api } from '@/lib/api-client'
+import { CompleteScanResult } from '@/lib/news-fetcher'
 import { Building2, Eye, Bookmark, RotateCcw, Star } from 'lucide-react'
 
 interface NewsItem {
@@ -40,6 +42,8 @@ export default function Home() {
     formatted: string
     relative: string
   } | null>(null)
+  const [showScanResults, setShowScanResults] = useState(false)
+  const [scanResults, setScanResults] = useState<CompleteScanResult | null>(null)
 
   // Get all news items as flat array based on view mode
   const getAllNewsItems = useCallback(() => {
@@ -126,50 +130,70 @@ export default function Home() {
     setCurrentNewsIndex(0)
   }, [])
 
+  const handleCloseScanResults = useCallback(() => {
+    setShowScanResults(false)
+    setScanResults(null)
+  }, [])
+
+  const handleContinueFromScanResults = useCallback(() => {
+    setShowScanResults(false)
+    // Don't clear scan results in case user wants to view them again
+  }, [])
+
   // Keyboard shortcuts
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
     // Don't trigger shortcuts if user is typing in an input
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
       return
     }
-    
-    switch (e.key) {
-      case 'ArrowLeft':
-        e.preventDefault()
-        handlePrevious()
-        break
-      case 'ArrowRight':
-        e.preventDefault()
-        handleNext()
-        break
-      case ' ':
-        e.preventDefault()
-        if (currentNews) {
-          window.open(currentNews.url, '_blank')
-          handleNewsClicked(currentNews.id)
-        }
-        break
-      case 'ArrowUp':
-        e.preventDefault()
-        if (currentNews) {
-          handleNewsRated(currentNews.id, 2)
-        }
-        break
-      case 'ArrowDown':
-        e.preventDefault()
-        if (currentNews) {
-          handleNewsRated(currentNews.id, 1)
-        }
-        break
-      case 'b':
-      case 'B':
-        e.preventDefault()
-        if (currentNews) {
-          handleReadLaterToggled(currentNews.id, !currentNews.readLater)
-        }
-        break
+
+    // If scan results are shown, handle space key to continue
+    if (showScanResults && e.key === ' ') {
+      e.preventDefault()
+      handleContinueFromScanResults()
+      return
     }
-  }, [currentNews, handleNewsClicked, handleNewsRated, handleReadLaterToggled, handleNext, handlePrevious])
+
+    // Regular keyboard shortcuts (only when scan results are not shown)
+    if (!showScanResults) {
+      switch (e.key) {
+        case 'ArrowLeft':
+          e.preventDefault()
+          handlePrevious()
+          break
+        case 'ArrowRight':
+          e.preventDefault()
+          handleNext()
+          break
+        case ' ':
+          e.preventDefault()
+          if (currentNews) {
+            window.open(currentNews.url, '_blank')
+            handleNewsClicked(currentNews.id)
+          }
+          break
+        case 'ArrowUp':
+          e.preventDefault()
+          if (currentNews) {
+            handleNewsRated(currentNews.id, 2)
+          }
+          break
+        case 'ArrowDown':
+          e.preventDefault()
+          if (currentNews) {
+            handleNewsRated(currentNews.id, 1)
+          }
+          break
+        case 'b':
+        case 'B':
+          e.preventDefault()
+          if (currentNews) {
+            handleReadLaterToggled(currentNews.id, !currentNews.readLater)
+          }
+          break
+      }
+    }
+  }, [currentNews, handleNewsClicked, handleNewsRated, handleReadLaterToggled, handleNext, handlePrevious, showScanResults, handleContinueFromScanResults])
 
   const fetchLastRefresh = useCallback(async () => {
     try {
@@ -200,12 +224,18 @@ export default function Home() {
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true)
     try {
-      await api.post('/api/news/fetch')
-      
-      await api.post('/api/metadata/last-refresh', { 
-        timestamp: new Date().toISOString() 
+      const response = await api.post('/api/news/fetch')
+
+      await api.post('/api/metadata/last-refresh', {
+        timestamp: new Date().toISOString()
       })
-      
+
+      // Check if we got scan results
+      if (response.type === 'full-scan' && response.scanResults) {
+        setScanResults(response.scanResults)
+        setShowScanResults(true)
+      }
+
       await fetchNews()
       await fetchLastRefresh()
     } catch (error) {
@@ -261,6 +291,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      {/* Show scan results overlay if available */}
+      {showScanResults && scanResults && (
+        <ScanResults
+          scanResults={scanResults}
+          onClose={handleCloseScanResults}
+          onContinue={handleContinueFromScanResults}
+        />
+      )}
+
       <div className="relative z-10">
         <Header onRefresh={handleRefresh} isRefreshing={isRefreshing} lastRefresh={lastRefresh} />
         
