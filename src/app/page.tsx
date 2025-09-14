@@ -408,7 +408,7 @@ export default function Home() {
                 <div className="w-2 h-2 bg-[var(--pulp-orange)] rounded-full animate-pulse"></div>
               </div>
               <p className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)'] text-sm">
-                Single-News Mode • Cosmic intelligence network active
+                Cosmic intelligence network active
               </p>
               <p className="text-muted-foreground font-['var(--font-share-tech-mono)'] text-xs mt-2">
                 Current mode: {viewMode === 'unread' ? 'UNREAD NEWS' : 
