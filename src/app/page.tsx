@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Header } from '@/components/Header'
 import { SingleNewsView } from '@/components/SingleNewsView'
 import { api } from '@/lib/api-client'
-import { Building2, Eye, EyeOff, ThumbsDown, ThumbsUp, Bookmark, RotateCcw, Star } from 'lucide-react'
+import { Building2, Eye, Bookmark, RotateCcw, Star } from 'lucide-react'
 
 interface NewsItem {
   id: string
@@ -36,8 +36,6 @@ export default function Home() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0)
   const [viewMode, setViewMode] = useState<ViewMode>('all')
-  const [showReadNews, setShowReadNews] = useState(true)
-  const [showUninteresting, setShowUninteresting] = useState(false)
   const [lastRefresh, setLastRefresh] = useState<{
     formatted: string
     relative: string
@@ -56,12 +54,9 @@ export default function Home() {
         return allNews.filter(item => item.rating === 2)
       case 'all':
       default:
-        return showReadNews && showUninteresting ? allNews :
-               showReadNews ? allNews.filter(item => !item.rating || item.rating === 2) :
-               showUninteresting ? allNews.filter(item => !item.clicked) :
-               allNews.filter(item => !item.clicked && (!item.rating || item.rating === 2))
+        return allNews
     }
-  }, [news, viewMode, showReadNews, showUninteresting])
+  }, [news, viewMode])
 
   const allNewsItems = getAllNewsItems()
   const currentNews = allNewsItems[currentNewsIndex]
@@ -298,8 +293,6 @@ export default function Home() {
               <button
                 onClick={() => {
                   setViewMode('all')
-                  setShowReadNews(true)
-                  setShowUninteresting(true)
                   setCurrentNewsIndex(0)
                 }}
                 className="mt-6 flex items-center gap-2 mx-auto px-6 py-3 rounded-lg border-2 border-[var(--pulp-orange)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-orange)] text-[var(--pulp-orange)] font-['var(--font-share-tech-mono)'] transition-all duration-300"
@@ -365,38 +358,6 @@ export default function Home() {
               </button>
             </div>
             
-            {/* Legacy filter buttons - only show in 'all' mode */}
-            {viewMode === 'all' && (
-              <div className="flex justify-center gap-4 mb-6 flex-wrap">
-                <button
-                  onClick={() => setShowReadNews(!showReadNews)}
-                  className="flex items-center gap-3 px-6 py-3 rounded-lg border-2 border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] hover:shadow-[0_0_20px_var(--pulp-blue),inset_0_0_15px_rgba(0,212,255,0.1)] transition-all duration-300 group"
-                >
-                  {showReadNews ? (
-                    <EyeOff className="w-5 h-5 text-[var(--pulp-red)] group-hover:text-[var(--pulp-blue)] transition-colors" />
-                  ) : (
-                    <Eye className="w-5 h-5 text-[var(--pulp-blue)] group-hover:text-[var(--pulp-orange)] transition-colors" />
-                  )}
-                  <span className="text-[var(--pulp-blue)] group-hover:text-[var(--pulp-orange)] font-['var(--font-share-tech-mono)'] font-medium transition-colors">
-                    {showReadNews ? 'HIDE READ NEWS' : 'SHOW READ NEWS'}
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setShowUninteresting(!showUninteresting)}
-                  className="flex items-center gap-3 px-6 py-3 rounded-lg border-2 border-[var(--pulp-red)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-red)] hover:shadow-[0_0_20px_var(--pulp-red),inset_0_0_15px_rgba(255,56,56,0.1)] transition-all duration-300 group"
-                >
-                  {showUninteresting ? (
-                    <ThumbsUp className="w-5 h-5 text-[var(--pulp-green)] group-hover:text-[var(--pulp-red)] transition-colors" />
-                  ) : (
-                    <ThumbsDown className="w-5 h-5 text-[var(--pulp-red)] group-hover:text-[var(--pulp-green)] transition-colors" />
-                  )}
-                  <span className="text-[var(--pulp-red)] group-hover:text-[var(--pulp-green)] font-['var(--font-share-tech-mono)'] font-medium transition-colors">
-                    {showUninteresting ? 'HIDE UNINTERESTING' : 'SHOW UNINTERESTING'}
-                  </span>
-                </button>
-              </div>
-            )}
 
             {/* Terminal Info */}
             <div className="text-center">
