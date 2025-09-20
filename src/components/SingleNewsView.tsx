@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { ExternalLink, Clock, ThumbsUp, ThumbsDown, Bookmark, BookmarkCheck, ArrowLeft, ArrowRight, Eye } from "lucide-react"
+import { Clock, ThumbsUp, ThumbsDown, Bookmark, BookmarkCheck, ArrowLeft, ArrowRight, Eye } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { api } from "@/lib/api-client"
 
@@ -170,32 +170,32 @@ export function SingleNewsView({
   return (
     <div className="max-w-4xl mx-auto px-4">
       {/* Navigation Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+        <div className="flex items-center gap-3 justify-between w-full sm:w-auto sm:justify-start sm:flex-wrap">
           <button
             onClick={onPrevious}
             disabled={currentIndex === 0}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+            className="flex items-center gap-2 px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm rounded-lg border-2 border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex-shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="font-['var(--font-share-tech-mono)']">PREVIOUS</span>
           </button>
           
-          <div className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)']">
+          <div className="flex-1 text-center text-xs sm:text-sm text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)']">
             <span className="text-[var(--pulp-orange)] font-bold">{currentIndex + 1}</span> / {totalCount}
           </div>
           
           <button
             onClick={onNext}
             disabled={currentIndex >= totalCount - 1}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+            className="flex items-center gap-2 px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm rounded-lg border-2 border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex-shrink-0"
           >
             <span className="font-['var(--font-share-tech-mono)']">NEXT</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
         
-        <div className="text-[var(--pulp-orange)] font-['var(--font-orbitron)'] font-bold">
+        <div className="text-[var(--pulp-orange)] font-['var(--font-orbitron)'] font-bold text-center sm:text-right text-sm sm:text-base">
           {category}
         </div>
       </div>
@@ -251,56 +251,89 @@ export function SingleNewsView({
       </Card>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-center gap-6 mt-8 flex-wrap">
-        <button
-          onClick={(e) => handleReadLaterToggle(e)}
-          className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 font-['var(--font-share-tech-mono)'] font-medium ${
-            isReadLater
-              ? 'border-[var(--pulp-orange)] bg-[var(--pulp-orange)]/20 text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)]'
-              : 'border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] text-[var(--pulp-blue)] hover:text-[var(--pulp-orange)]'
-          }`}
-        >
-          {isReadLater ? (
-            <BookmarkCheck className="w-5 h-5" />
-          ) : (
-            <Bookmark className="w-5 h-5" />
-          )}
-          <span>{isReadLater ? 'SAVED' : 'READ LATER'}</span>
-        </button>
+      <div className="mt-8 flex flex-col items-center gap-4">
+        <div className="grid w-full max-w-md grid-cols-2 gap-3 md:hidden">
+          <button
+            onClick={(e) => handleReadLaterToggle(e)}
+            className={`flex items-center justify-center gap-2 px-4 py-2 text-sm rounded-lg border-2 transition-all duration-300 font-['var(--font-share-tech-mono)'] font-medium ${
+              isReadLater
+                ? 'border-[var(--pulp-orange)] bg-[var(--pulp-orange)]/20 text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)]'
+                : 'border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] text-[var(--pulp-blue)] hover:text-[var(--pulp-orange)]'
+            }`}
+          >
+            {isReadLater ? (
+              <BookmarkCheck className="w-4 h-4" />
+            ) : (
+              <Bookmark className="w-4 h-4" />
+            )}
+            <span>{isReadLater ? 'SAVED' : 'READ LATER'}</span>
+          </button>
+
+          <button
+            onClick={(e) => handleRating(e, 2)}
+            className={`flex items-center justify-center gap-2 px-4 py-2 text-sm rounded-lg border-2 transition-all duration-300 font-['var(--font-share-tech-mono)'] font-medium ${
+              currentRating === 2
+                ? 'border-[var(--pulp-green)] bg-[var(--pulp-green)]/20 text-[var(--pulp-green)] shadow-[0_0_20px_var(--pulp-green)]'
+                : 'border-[var(--pulp-green)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-green)] text-[var(--pulp-green)]'
+            }`}
+          >
+            <ThumbsUp className="w-4 h-4" />
+            <span>INTERESTING</span>
+          </button>
+        </div>
+
+        <div className="hidden md:flex md:w-full md:max-w-3xl md:items-center md:justify-center md:gap-6">
+          <button
+            onClick={(e) => handleReadLaterToggle(e)}
+            className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 font-['var(--font-share-tech-mono)'] font-medium ${
+              isReadLater
+                ? 'border-[var(--pulp-orange)] bg-[var(--pulp-orange)]/20 text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)]'
+                : 'border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] text-[var(--pulp-blue)] hover:text-[var(--pulp-orange)]'
+            }`}
+          >
+            {isReadLater ? (
+              <BookmarkCheck className="w-5 h-5" />
+            ) : (
+              <Bookmark className="w-5 h-5" />
+            )}
+            <span>{isReadLater ? 'SAVED' : 'READ LATER'}</span>
+          </button>
+
+          <button
+            onClick={(e) => handleRating(e, 2)}
+            className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 font-['var(--font-share-tech-mono)'] font-medium ${
+              currentRating === 2
+                ? 'border-[var(--pulp-green)] bg-[var(--pulp-green)]/20 text-[var(--pulp-green)] shadow-[0_0_20px_var(--pulp-green)]'
+                : 'border-[var(--pulp-green)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-green)] text-[var(--pulp-green)]'
+            }`}
+          >
+            <ThumbsUp className="w-5 h-5" />
+            <span>INTERESTING</span>
+          </button>
+
+          <button
+            onClick={(e) => handleRating(e, 1)}
+            className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 font-['var(--font-share-tech-mono)'] font-medium ${
+              currentRating === 1
+                ? 'border-[var(--pulp-red)] bg-[var(--pulp-red)]/20 text-[var(--pulp-red)] shadow-[0_0_20px_var(--pulp-red)]'
+                : 'border-[var(--pulp-red)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-red)] text-[var(--pulp-red)]'
+            }`}
+          >
+            <ThumbsDown className="w-5 h-5" />
+            <span>NOT INTERESTED</span>
+          </button>
+        </div>
 
         <button
           onClick={(e) => handleRating(e, 1)}
-          className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 font-['var(--font-share-tech-mono)'] font-medium hover:scale-105 ${
+          className={`md:hidden flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-lg border-2 transition-all duration-300 font-['var(--font-share-tech-mono)'] font-medium ${
             currentRating === 1
               ? 'border-[var(--pulp-red)] bg-[var(--pulp-red)]/20 text-[var(--pulp-red)] shadow-[0_0_20px_var(--pulp-red)]'
               : 'border-[var(--pulp-red)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-red)] text-[var(--pulp-red)]'
           }`}
         >
-          <ThumbsDown className="w-5 h-5" />
+          <ThumbsDown className="w-4 sm:w-5 h-4 sm:h-5" />
           <span>NOT INTERESTED</span>
-        </button>
-
-        <a
-          href={news.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => handleLinkClick(e)}
-          className="flex items-center gap-3 px-8 py-3 rounded-lg border-2 border-[var(--pulp-orange)]/30 bg-[var(--pulp-orange)]/10 backdrop-blur-sm hover:border-[var(--pulp-orange)] hover:bg-[var(--pulp-orange)]/20 hover:shadow-[0_0_30px_var(--pulp-orange)] text-[var(--pulp-orange)] font-['var(--font-share-tech-mono)'] font-medium transition-all duration-300 hover:scale-105"
-        >
-          <ExternalLink className="w-5 h-5" />
-          <span>READ ARTICLE</span>
-        </a>
-
-        <button
-          onClick={(e) => handleRating(e, 2)}
-          className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 font-['var(--font-share-tech-mono)'] font-medium hover:scale-105 ${
-            currentRating === 2
-              ? 'border-[var(--pulp-green)] bg-[var(--pulp-green)]/20 text-[var(--pulp-green)] shadow-[0_0_20px_var(--pulp-green)]'
-              : 'border-[var(--pulp-green)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-green)] text-[var(--pulp-green)]'
-          }`}
-        >
-          <ThumbsUp className="w-5 h-5" />
-          <span>INTERESTING</span>
         </button>
       </div>
 

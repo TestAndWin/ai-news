@@ -46,7 +46,11 @@ export default function LoginPage() {
               </div>
             </div>
             <div className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)'] text-sm">
-              <span className="typing-effect">COSMIC INTELLIGENCE AUTHORIZATION • FUTURE-TECH SECURITY</span>
+              <span className="typing-effect block">
+                COSMIC INTELLIGENCE AUTHORIZATION
+                <br />
+                • FUTURE-TECH SECURITY
+              </span>
             </div>
           </div>
 

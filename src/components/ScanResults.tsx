@@ -10,7 +10,7 @@ interface ScanResultsProps {
 }
 
 export function ScanResults({ scanResults, onClose, onContinue }: ScanResultsProps) {
-  const { results, totalNewArticles, processedSources } = scanResults
+  const { results, totalNewArticles, processedSources, scanStartedAt, scanCompletedAt } = scanResults
 
   // Group results by category
   const groupedResults = results.reduce((acc, result) => {
@@ -47,6 +47,20 @@ export function ScanResults({ scanResults, onClose, onContinue }: ScanResultsPro
     }
   }
 
+  const formatTimestamp = (date: Date) => {
+    return new Intl.DateTimeFormat('de-DE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }).format(date)
+  }
+
+  const formattedScanStart = scanStartedAt ? formatTimestamp(new Date(scanStartedAt)) : null
+  const formattedScanCompletion = scanCompletedAt ? formatTimestamp(new Date(scanCompletedAt)) : formatTimestamp(new Date())
+
   return (
     <div className="fixed inset-0 bg-background/95 backdrop-blur-lg z-50 overflow-y-auto">
       <div className="relative min-h-screen">
@@ -68,6 +82,16 @@ export function ScanResults({ scanResults, onClose, onContinue }: ScanResultsPro
                 COSMIC SCAN COMPLETE
               </h1>
               <Activity className="w-8 h-8 text-[var(--pulp-orange)] animate-pulse" />
+            </div>
+
+            <div className="text-sm md:text-base text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)'] mb-6">
+              {formattedScanStart ? (
+                <span>
+                  Suche nach neuen News seit {formattedScanStart} &mdash; Abschluss um {formattedScanCompletion}
+                </span>
+              ) : (
+                <span>Erste Missionssuche abgeschlossen um {formattedScanCompletion}</span>
+              )}
             </div>
 
             {/* Summary stats */}

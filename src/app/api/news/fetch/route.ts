@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { fetchAllNews, fetchSingleSource, CompleteScanResult, ScanResult } from '@/lib/news-fetcher'
+import { getLastRefreshTimestamp, setLastRefreshTimestamp } from '@/lib/metadata'
 import { withAuth } from '@/lib/api-auth'
 import { withRateLimit } from '@/lib/rate-limiter'
 import { handleApiError, ApiError, ApiErrorType } from '@/lib/api-errors'
@@ -29,7 +30,9 @@ async function handlePOST(request: NextRequest) {
         type: 'single-source'
       })
     } else {
-      const scanResults: CompleteScanResult = await fetchAllNews()
+      const lastScanTimestamp = await getLastRefreshTimestamp()
+      const scanResults: CompleteScanResult = await fetchAllNews(lastScanTimestamp)
+      await setLastRefreshTimestamp(new Date(scanResults.scanCompletedAt))
       return NextResponse.json({
         success: true,
         message: 'News fetched successfully',

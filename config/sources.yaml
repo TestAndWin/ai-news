@@ -81,9 +81,6 @@ Business & Society:
   - name: Management 3k
     url: https://www.management30.com/blog/
     feed: null
-  - name: VentureBeat AI
-    url: https://venturebeat.com/category/ai/
-    feed: https://venturebeat.com/category/ai/feed/
   - name: The Verge AI
     url: https://www.theverge.com/ai-artificial-intelligence
     feed: null

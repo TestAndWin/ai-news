@@ -4,9 +4,10 @@ import { useState, useEffect, useCallback } from 'react'
 import { Header } from '@/components/Header'
 import { SingleNewsView } from '@/components/SingleNewsView'
 import { ScanResults } from '@/components/ScanResults'
+import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api-client'
 import { CompleteScanResult } from '@/lib/news-fetcher'
-import { Building2, Eye, Bookmark, RotateCcw, Star } from 'lucide-react'
+import { Building2, Eye, Bookmark, RotateCcw, Star, RefreshCw, CheckCircle2, LogOut } from 'lucide-react'
 
 interface NewsItem {
   id: string
@@ -37,7 +38,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0)
-  const [viewMode, setViewMode] = useState<ViewMode>('all')
+  const [viewMode, setViewMode] = useState<ViewMode>('unread')
   const [lastRefresh, setLastRefresh] = useState<{
     formatted: string
     relative: string
@@ -157,6 +158,14 @@ export default function Home() {
     await fetchNews(newMode)
   }, [fetchNews])
 
+  const handleLogout = useCallback(async () => {
+    try {
+      await api.logout()
+    } catch (error) {
+      console.error('Error during logout:', error)
+    }
+  }, [])
+
   // Keyboard shortcuts
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
     // Don't trigger shortcuts if user is typing in an input
@@ -230,10 +239,6 @@ export default function Home() {
     try {
       const response = await api.post('/api/news/fetch')
 
-      await api.post('/api/metadata/last-refresh', {
-        timestamp: new Date().toISOString()
-      })
-
       // Check if we got scan results
       if (response.type === 'full-scan' && response.scanResults) {
         setScanResults(response.scanResults)
@@ -273,7 +278,7 @@ export default function Home() {
               AI NEWS
             </div>
             <div className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)'] text-lg mb-4">
-              <span className="typing-effect">COSMIC INTELLIGENCE NETWORK ACTIVATION</span>
+              <span className="typing-effect">COSMIC INTELLIGENCE <br/>NETWORK ACTIVATION</span>
             </div>
             <div className="flex justify-center gap-2 mb-4">
               {[...Array(8)].map((_, i) => (
@@ -293,6 +298,95 @@ export default function Home() {
     )
   }
 
+  const renderViewModeButtons = (wrapperClass: string) => (
+    <div className={wrapperClass}>
+      <Button
+        onClick={() => handleViewModeChange('unread')}
+        variant="outline"
+        className={`w-full md:w-auto border-2 bg-background/30 font-['var(--font-share-tech-mono)'] transition-all duration-300 relative overflow-hidden ${
+          viewMode === 'unread'
+            ? 'border-[var(--pulp-orange)] text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)] bg-[var(--pulp-orange)]/15'
+            : 'border-[var(--pulp-blue)]/30 text-[var(--pulp-blue)] hover:border-[var(--pulp-blue)] hover:bg-[var(--pulp-blue)]/10'
+        }`}
+      >
+        <Eye className="w-4 h-4 mr-2" />
+        UNREAD NEWS
+      </Button>
+
+      <Button
+        onClick={() => handleViewModeChange('readLater')}
+        variant="outline"
+        className={`w-full md:w-auto border-2 bg-background/30 font-['var(--font-share-tech-mono)'] transition-all duration-300 relative overflow-hidden ${
+          viewMode === 'readLater'
+            ? 'border-[var(--pulp-orange)] text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)] bg-[var(--pulp-orange)]/15'
+            : 'border-[var(--pulp-blue)]/30 text-[var(--pulp-blue)] hover:border-[var(--pulp-blue)] hover:bg-[var(--pulp-blue)]/10'
+        }`}
+      >
+        <Bookmark className="w-4 h-4 mr-2" />
+        READ LATER
+      </Button>
+
+      <Button
+        onClick={() => handleViewModeChange('interesting')}
+        variant="outline"
+        className={`w-full md:w-auto border-2 bg-background/30 font-['var(--font-share-tech-mono)'] transition-all duration-300 relative overflow-hidden ${
+          viewMode === 'interesting'
+            ? 'border-[var(--pulp-orange)] text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)] bg-[var(--pulp-orange)]/15'
+            : 'border-[var(--pulp-blue)]/30 text-[var(--pulp-blue)] hover:border-[var(--pulp-blue)] hover:bg-[var(--pulp-blue)]/10'
+        }`}
+      >
+        <Star className="w-4 h-4 mr-2" />
+        INTERESTING NEWS
+      </Button>
+
+      <Button
+        onClick={() => handleViewModeChange('all')}
+        variant="outline"
+        className={`w-full md:w-auto border-2 bg-background/30 font-['var(--font-share-tech-mono)'] transition-all duration-300 relative overflow-hidden ${
+          viewMode === 'all'
+            ? 'border-[var(--pulp-orange)] text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)] bg-[var(--pulp-orange)]/15'
+            : 'border-[var(--pulp-blue)]/30 text-[var(--pulp-blue)] hover:border-[var(--pulp-blue)] hover:bg-[var(--pulp-blue)]/10'
+        }`}
+      >
+        <Building2 className="w-4 h-4 mr-2" />
+        ALL NEWS
+      </Button>
+    </div>
+  )
+
+  const mobileMissionActions = (
+    <div className="md:hidden mt-4 mb-2 flex flex-col gap-3">
+      <Button
+        onClick={handleRefresh}
+        disabled={isRefreshing}
+        variant="outline"
+        className="w-full border-2 border-[var(--pulp-orange)] bg-background/30 hover:bg-[var(--pulp-orange)]/10 hover:shadow-[0_0_30px_var(--pulp-orange)] font-['var(--font-share-tech-mono)'] text-[var(--pulp-orange)] transition-all duration-300 relative overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--pulp-orange)]/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
+        <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+        {isRefreshing ? 'SCANNING...' : 'COSMIC SCAN'}
+      </Button>
+
+      <Button
+        onClick={handleMarkAllRead}
+        variant="outline"
+        className="w-full border-2 border-[var(--pulp-blue)] bg-background/30 hover:bg-[var(--pulp-blue)]/10 hover:shadow-[0_0_30px_var(--pulp-blue)] font-['var(--font-share-tech-mono)'] text-[var(--pulp-blue)] transition-all duration-300 relative overflow-hidden"
+      >
+        <CheckCircle2 className="w-4 h-4 mr-2" />
+        MARK ALL READ
+      </Button>
+
+      <Button
+        onClick={handleLogout}
+        variant="outline"
+        className="w-full border-2 border-[var(--pulp-red)] bg-background/30 hover:bg-[var(--pulp-red)]/10 hover:shadow-[0_0_30px_var(--pulp-red)] font-['var(--font-share-tech-mono)'] text-[var(--pulp-red)] transition-all duration-300 relative overflow-hidden"
+      >
+        <LogOut className="w-4 h-4 mr-2" />
+        MISSION END
+      </Button>
+    </div>
+  )
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Show scan results overlay if available */}
@@ -305,21 +399,30 @@ export default function Home() {
       )}
 
       <div className="relative z-10">
-        <Header onRefresh={handleRefresh} isRefreshing={isRefreshing} onMarkAllRead={handleMarkAllRead} lastRefresh={lastRefresh} />
+        <Header
+          onRefresh={handleRefresh}
+          isRefreshing={isRefreshing}
+          onMarkAllRead={handleMarkAllRead}
+          onLogout={handleLogout}
+          lastRefresh={lastRefresh}
+        />
         
         <main className="container mx-auto px-4 py-8">
           {currentNews ? (
-            <SingleNewsView
-              news={currentNews}
-              onNewsClicked={handleNewsClicked}
-              onNewsRated={handleNewsRated}
-              onReadLaterToggled={handleReadLaterToggled}
-              onNext={handleNext}
-              onPrevious={handlePrevious}
-              currentIndex={currentNewsIndex}
-              totalCount={allNewsItems.length}
-              category={getCategoryForNews(currentNews)}
-            />
+            <>
+              <SingleNewsView
+                news={currentNews}
+                onNewsClicked={handleNewsClicked}
+                onNewsRated={handleNewsRated}
+                onReadLaterToggled={handleReadLaterToggled}
+                onNext={handleNext}
+                onPrevious={handlePrevious}
+                currentIndex={currentNewsIndex}
+                totalCount={allNewsItems.length}
+                category={getCategoryForNews(currentNews)}
+              />
+
+            </>
           ) : (
             <div className="text-center py-16">
               <div className="text-6xl mb-6 text-[var(--pulp-orange)]">
@@ -342,61 +445,18 @@ export default function Home() {
               </button>
             </div>
           )}
+
+          <div className="md:hidden h-px w-full bg-[var(--pulp-orange)]/30 mt-6 mb-8"></div>
+          {renderViewModeButtons('md:hidden flex flex-col gap-3 mt-8')}
+          <div className="md:hidden h-px w-full bg-[var(--pulp-orange)]/30 my-3"></div>
+          {mobileMissionActions}
         </main>
         
-        <footer className="border-t-2 border-[var(--pulp-orange)]/30 bg-card/20 backdrop-blur-md mt-16 relative">
+        <footer className="border-t-2 border-[var(--pulp-orange)]/30 bg-card/20 backdrop-blur-md relative">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--pulp-orange)]/5 to-transparent"></div>
           <div className="container mx-auto px-4 py-8 relative z-10">
             {/* View Mode Toggle Buttons */}
-            <div className="flex justify-center gap-4 mb-6 flex-wrap">
-              <button
-                onClick={() => handleViewModeChange('unread')}
-                className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 group font-['var(--font-share-tech-mono)'] font-medium ${
-                  viewMode === 'unread' 
-                    ? 'border-[var(--pulp-orange)] bg-[var(--pulp-orange)]/20 text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)]'
-                    : 'border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] text-[var(--pulp-blue)]'
-                }`}
-              >
-                <Eye className="w-5 h-5" />
-                <span>UNREAD NEWS</span>
-              </button>
-
-              <button
-                onClick={() => handleViewModeChange('readLater')}
-                className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 group font-['var(--font-share-tech-mono)'] font-medium ${
-                  viewMode === 'readLater'
-                    ? 'border-[var(--pulp-orange)] bg-[var(--pulp-orange)]/20 text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)]'
-                    : 'border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] text-[var(--pulp-blue)]'
-                }`}
-              >
-                <Bookmark className="w-5 h-5" />
-                <span>READ LATER</span>
-              </button>
-
-              <button
-                onClick={() => handleViewModeChange('interesting')}
-                className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 group font-['var(--font-share-tech-mono)'] font-medium ${
-                  viewMode === 'interesting'
-                    ? 'border-[var(--pulp-orange)] bg-[var(--pulp-orange)]/20 text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)]'
-                    : 'border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] text-[var(--pulp-blue)]'
-                }`}
-              >
-                <Star className="w-5 h-5" />
-                <span>INTERESTING NEWS</span>
-              </button>
-
-              <button
-                onClick={() => handleViewModeChange('all')}
-                className={`flex items-center gap-3 px-6 py-3 rounded-lg border-2 transition-all duration-300 group font-['var(--font-share-tech-mono)'] font-medium ${
-                  viewMode === 'all'
-                    ? 'border-[var(--pulp-orange)] bg-[var(--pulp-orange)]/20 text-[var(--pulp-orange)] shadow-[0_0_20px_var(--pulp-orange)]'
-                    : 'border-[var(--pulp-blue)]/30 bg-card/40 backdrop-blur-sm hover:border-[var(--pulp-blue)] text-[var(--pulp-blue)]'
-                }`}
-              >
-                <Building2 className="w-5 h-5" />
-                <span>ALL NEWS</span>
-              </button>
-            </div>
+            {renderViewModeButtons('hidden md:flex md:flex-row md:flex-wrap gap-3 md:gap-4 justify-center mb-6')}
             
 
             {/* Terminal Info */}
@@ -408,8 +468,11 @@ export default function Home() {
                 </p>
                 <div className="w-2 h-2 bg-[var(--pulp-orange)] rounded-full animate-pulse"></div>
               </div>
-              <p className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)'] text-sm">
-                Cosmic intelligence network active
+              <p className="text-[var(--pulp-blue)] font-['var(--font-share-tech-mono)'] text-sm whitespace-pre-line">
+                Cosmic intelligence
+                <br className="sm:hidden" />
+                <span className="sm:hidden">network active</span>
+                <span className="hidden sm:inline"> network active</span>
               </p>
               <p className="text-muted-foreground font-['var(--font-share-tech-mono)'] text-xs mt-2">
                 Current mode: {viewMode === 'unread' ? 'UNREAD NEWS' : 

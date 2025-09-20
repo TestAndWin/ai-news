@@ -31,6 +31,8 @@ export interface CompleteScanResult {
   totalNewArticles: number
   totalSources: number
   processedSources: number
+  scanStartedAt?: string | null
+  scanCompletedAt: string
 }
 
 const parser = new RSSParser({
@@ -244,7 +246,7 @@ export async function fetchSingleSource(sourceName: string): Promise<ScanResult>
   }
 }
 
-export async function fetchAllNews(): Promise<CompleteScanResult> {
+export async function fetchAllNews(scanWindowStart?: Date | null): Promise<CompleteScanResult> {
   const scanResults: ScanResult[] = []
   let totalSources = 0
   let processedSources = 0
@@ -301,11 +303,15 @@ export async function fetchAllNews(): Promise<CompleteScanResult> {
     console.log(`✅ Comprehensive news fetching completed! Processed ${processedSources}/${totalSources} sources`)
     console.log(`🔢 Total new articles found: ${totalNewArticles}`)
 
+    const scanCompletedAt = new Date().toISOString()
+
     return {
       results: scanResults,
       totalNewArticles,
       totalSources,
-      processedSources
+      processedSources,
+      scanStartedAt: scanWindowStart ? scanWindowStart.toISOString() : null,
+      scanCompletedAt
     }
   } catch (error) {
     console.error('❌ Error fetching news:', error)
@@ -316,7 +322,9 @@ export async function fetchAllNews(): Promise<CompleteScanResult> {
       results: scanResults,
       totalNewArticles,
       totalSources,
-      processedSources
+      processedSources,
+      scanStartedAt: scanWindowStart ? scanWindowStart.toISOString() : null,
+      scanCompletedAt: new Date().toISOString()
     }
   }
 }
