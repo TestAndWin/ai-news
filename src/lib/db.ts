@@ -1,8 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaBetterSQLite3 } from '@prisma/adapter-better-sqlite3'
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 import pg from 'pg'
-import Database from 'better-sqlite3'
 
 // Database configuration - schema selection happens at build time via npm scripts
 const isProduction = process.env.NODE_ENV === 'production'
@@ -28,9 +27,9 @@ if (isProduction && isVercel) {
 } else {
   // SQLite adapter for development
   console.log('🗄️ Using SQLite for development')
-  const dbPath = process.env.DATABASE_URL?.replace('file:', '') || './dev.db'
-  const sqlite = new Database(dbPath)
-  adapter = new PrismaBetterSQLite3(sqlite)
+  adapter = new PrismaBetterSqlite3({
+    url: process.env.DATABASE_URL as string,
+  })
 }
 
 const globalForPrisma = globalThis as unknown as {
