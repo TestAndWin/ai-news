@@ -34,8 +34,12 @@ export function generateRefreshToken(userId: string, tokenVersion: number = 1): 
 
 export function verifyAccessToken(token: string): TokenPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as TokenPayload
-  } catch {
+    console.log('[JWT DEBUG] Verifying token with secret:', JWT_SECRET.substring(0, 10) + '...')
+    const payload = jwt.verify(token, JWT_SECRET) as TokenPayload
+    console.log('[JWT DEBUG] Token verified successfully, userId:', payload.userId)
+    return payload
+  } catch (error) {
+    console.log('[JWT DEBUG] Token verification failed:', error instanceof Error ? error.message : 'unknown error')
     return null
   }
 }
