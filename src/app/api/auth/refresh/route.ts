@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     response.cookies.set('access_token', newAccessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax', // Use 'none' in production for better compatibility
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
       maxAge: 60 * 60, // 1 hour
       path: '/'
     })

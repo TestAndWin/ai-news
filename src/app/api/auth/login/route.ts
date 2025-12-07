@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     const cookieOptions = {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax' as const,
+      sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
       maxAge: 60 * 60,
       path: '/'
     }
