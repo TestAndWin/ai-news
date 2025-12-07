@@ -19,9 +19,10 @@ export default function LoginPage() {
 
     try {
       const success = await api.login(password)
-      
+
       if (success) {
-        router.push('/')
+        // Use window.location instead of router.push to ensure cookies are properly set
+        window.location.href = '/'
       } else {
         setError('COSMIC ACCESS DENIED - INVALID CREDENTIALS')
       }
