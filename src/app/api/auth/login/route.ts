@@ -27,18 +27,19 @@ export async function POST(request: NextRequest) {
     })
     
     // Set httpOnly cookies for security
+    const isProduction = process.env.NODE_ENV === 'production'
     response.cookies.set('access_token', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax', // Use 'none' in production for better compatibility
       maxAge: 60 * 60, // 1 hour
       path: '/'
     })
 
     response.cookies.set('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax', // Use 'none' in production for better compatibility
       maxAge: 7 * 24 * 60 * 60, // 7 days
       path: '/'
     })

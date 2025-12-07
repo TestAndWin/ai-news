@@ -1,8 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { api } from '@/lib/api-client'
 import { Lock, Eye, EyeOff, Rocket } from 'lucide-react'
 
 export default function LoginPage() {
@@ -10,7 +8,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -18,10 +15,15 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const success = await api.login(password)
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+        credentials: 'include'
+      })
 
-      if (success) {
-        // Use window.location instead of router.push to ensure cookies are properly set
+      if (response.ok) {
+        // Force full page reload to ensure cookies are sent with the next request
         window.location.href = '/'
       } else {
         setError('COSMIC ACCESS DENIED - INVALID CREDENTIALS')

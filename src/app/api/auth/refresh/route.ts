@@ -31,10 +31,11 @@ export async function POST(request: NextRequest) {
     })
     
     // Update access token cookie
+    const isProduction = process.env.NODE_ENV === 'production'
     response.cookies.set('access_token', newAccessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax', // Use 'none' in production for better compatibility
       maxAge: 60 * 60, // 1 hour
       path: '/'
     })
